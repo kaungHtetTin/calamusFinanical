@@ -1,0 +1,458 @@
+import * as Item from './item.js';
+import * as View from './util/view.js';
+import {Adapter} from './util/adapter.js';
+
+console.log('earringJS start');
+
+
+var reqData="";
+if(req.major){
+    reqData+="&major="+req.major;
+}
+
+if(req.year){
+    reqData+="&year="+req.year;
+}
+
+
+if(req.month){
+    reqData+="&month="+req.month;
+}
+
+console.log('reqData',reqData);
+
+const main_view=View.findById('main_view');
+const main_pb=View.findById('main_pb');
+
+const total_earning=View.findById('total_earning');
+const total_cost=View.findById('total_cost');
+const net_earning=View.findById('net_earning');
+const payment_container=View.findById('payment_container');
+const cost_container=View.findById('cost_container');
+
+const total_payment=View.findById('total_payment');
+const btnNextPaymentList=View.findById('btnNextPaymentList');
+const btnPrevPaymentList=View.findById('btnPrevPaymentList');
+const btnLastPaymentList=View.findById('btnLastPaymentList');
+const btnFirstPaymentList=View.findById('btnFirstPaymentList');
+const payment_row_counter=View.findById('payment_row_counter');
+const payment_offset=View.findById('payment_offset');
+
+
+const total_cost_list=View.findById('total_cost_list');
+const btnNextCostList=View.findById('btnNextCostList');
+const btnPrevCostList=View.findById('btnPrevCostList');
+const btnLastCostList=View.findById('btnLastCostList');
+const btnFirstCostList=View.findById('btnFirstCostList');
+const cost_row_counter=View.findById('cost_row_counter');
+const cost_offset=View.findById('cost_offset');
+
+//overview
+const ui_subscriber=View.findById('subscriber');
+const ui_subscriber_totay=View.findById('subscriber_today');
+const ui_total_sale_today=View.findById('total_sale_today');
+
+//cost adding
+const ui_msg_box_success=View.findById('msg_box_success');
+const ui_msg_box_fail=View.findById('msg_box_fail');
+const ui_pb_cost_adding=View.findById('pb_cost_adding');
+const ui_input_cost_title=View.findById('input_cost_title');
+const ui_input_cost_amount=View.findById('input_cost_amount');
+const ui_btn_add_cost=View.findById('btn_add_cost');
+const ui_fail_msg=View.findById('fail_msg');
+const ui_success_msg=View.findById('success_msg');
+
+let paymentAdapter,costAdapter;
+
+fetchThePage();
+function fetchThePage(){
+
+    var ajax=new XMLHttpRequest();
+    ajax.onload =function(){
+        if(ajax.status==200 || ajax.readyState==4){
+            loadUI(JSON.parse(ajax.responseText));
+        }else{
+            console.log('somethine wrong');
+        }
+    };
+    ajax.open("GET","api/pages/earning.php?"+reqData,true);
+    ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    ajax.send();
+}
+
+function loadUI(data){
+    const earings=data.earnings;
+    const projectCosts=data.projectCosts;
+
+    let netEarning=earings.total-projectCosts.total_cost;
+
+    View.setText(total_earning,earings.total);
+    View.setText(total_cost,projectCosts.total_cost);
+   
+    View.setText(net_earning,netEarning);
+
+    View.setVisibility(main_view,true);
+    View.setVisibility(main_pb,false);
+
+    var payments=earings.payments;
+    View.setText(ui_subscriber,payments.length);
+    View.setText(total_payment,earings.total);
+
+    if(payments){
+        paymentAdapter=new Adapter(payments,payment_container,Item.paymentItem,20);
+        paymentAdapter.firstPage((info)=>{
+            View.setText(payment_row_counter,info);
+        });
+    }
+
+    View.setText(total_cost_list,projectCosts.total_cost);
+    let costs=projectCosts.costs;
+    if(costs){
+        costAdapter=new Adapter(costs,cost_container,Item.cost,10);
+            costAdapter.firstPage((info)=>{
+            View.setText(cost_row_counter,info);
+        });
+    }
+
+    var salesOfYear=data.saleOfYear;
+    console.log(salesOfYear);
+    setSaleOfYearChar(salesOfYear);
+
+    var saleOfDay=data.saleOfDay;
+    if(saleOfDay.total_amount!=null){
+        View.setText(ui_total_sale_today,saleOfDay.total_amount);
+    }else{
+        View.setText(ui_total_sale_today,0);
+    }
+    View.setText(ui_subscriber_totay,saleOfDay.total_subscriber);
+
+}
+
+payment_offset.addEventListener("change",function(){
+    console.log('input value',payment_offset.value);
+
+    paymentAdapter.setOffsetRange(parseInt(payment_offset.value),(info)=>{
+        View.setText(payment_row_counter,info);
+    });
+});
+
+
+btnFirstPaymentList.addEventListener("click",function(){
+    paymentAdapter.firstPage((info)=>{
+        View.setText(payment_row_counter,info);
+    })
+})
+
+btnLastPaymentList.addEventListener("click",function(){
+    paymentAdapter.lastPage((info)=>{
+        View.setText(payment_row_counter,info);
+    })
+});
+
+btnPrevPaymentList.addEventListener("click",function(){
+    paymentAdapter.prevPage((info)=>{
+         View.setText(payment_row_counter,info);
+    });
+});
+
+btnNextPaymentList.addEventListener("click", function(){
+    paymentAdapter.nextPage((info)=>{
+         View.setText(payment_row_counter,info);
+    });
+   
+});
+
+
+cost_offset.addEventListener("change",function(){
+    console.log('input value',cost_offset.value);
+
+    costAdapter.setOffsetRange(parseInt(cost_offset.value),(info)=>{
+        View.setText(cost_row_counter,info);
+    });
+});
+
+btnFirstCostList.addEventListener("click",function(){
+    costAdapter.firstPage((info)=>{
+        View.setText(cost_row_counter,info);
+    })
+})
+
+btnLastCostList.addEventListener("click",function(){
+    costAdapter.lastPage((info)=>{
+        View.setText(cost_row_counter,info);
+    })
+});
+
+btnPrevCostList.addEventListener("click",function(){
+    costAdapter.prevPage((info)=>{
+        View.setText(cost_row_counter,info);
+    });
+});
+
+btnNextCostList.addEventListener("click", function(){
+    costAdapter.nextPage((info)=>{
+        View.setText(cost_row_counter,info);
+    });
+   
+});
+
+
+ui_btn_add_cost.addEventListener("click", function(){
+    addNewCost();
+});
+
+
+function addNewCost(){
+    var title=ui_input_cost_title.value;
+    var amount=ui_input_cost_amount.value;
+
+   
+    View.setVisibility(ui_msg_box_fail,false);
+    View.setVisibility(ui_msg_box_success,false);
+
+    if(title==""){
+        View.setVisibility(ui_msg_box_fail,true);
+        View.setText(ui_fail_msg,"Please enter title");
+        return;
+    }
+    if(amount==""){
+        View.setVisibility(ui_msg_box_fail,true);
+        View.setText(ui_fail_msg,"Please enter amount");
+        return;
+    }
+
+    if(isNaN(amount)){
+        View.setVisibility(ui_msg_box_fail,true);
+        View.setText(ui_fail_msg,"Amount must be number");
+        return;
+    }
+
+    View.setVisibility(ui_pb_cost_adding,true);
+    var ajax=new XMLHttpRequest();
+    ajax.onload =function(){
+        if(ajax.status==200 || ajax.readyState==4){
+            console.log(ajax.responseText);
+            var response=JSON.parse(ajax.responseText);
+            if(response.status=="success"){
+                View.setVisibility(ui_msg_box_success,true);
+                View.setText(ui_success_msg,response.msg);
+                ui_input_cost_title.value="";
+                ui_input_cost_amount.value="";
+                fetchThePage()
+            }else{
+                View.setVisibility(ui_msg_box_fail,true);
+                View.setText(ui_fail_msg,response.msg);
+            }
+
+        }else{
+            View.setVisibility(ui_msg_box_fail,true)
+            View.setText(ui_fail_msg,"An unexpected error occurred!");
+        }
+        View.setVisibility(ui_pb_cost_adding,false);
+    };
+    ajax.open("POST","api/costs/add.php",true);
+    ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    ajax.send(`title=${title}&amount=${amount}&major=${req.major}`);
+
+}
+
+let paymentListId;
+function deletePayment(id,name,phone,currentAmount,date){
+    $('#modal_name').text(name);
+    $('#modal_phone').text(phone);
+    $('#modal_amount').text(currentAmount);
+    $('#modal_date').text(date);
+
+    $('#myModal').modal('show');
+    $("#modalCanel").click(function () {
+        
+    });
+    paymentListId=id;
+    $("#modalDelete").click(function () {
+        var payment=document.getElementById("pay_"+paymentListId);
+
+        payment.setAttribute('style','background:#f00;color:white;');
+
+        var ajax=new XMLHttpRequest();
+        ajax.onload =function(){
+            if(ajax.status==200 || ajax.readyState==4){
+
+                console.log(ajax.responseText);
+                fetchThePage();
+            }
+        };
+        ajax.open("POST","api/payments/delete.php",true);
+        ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        ajax.send("id="+paymentListId);
+
+    });
+}
+
+let costListId;
+function deleteCost(id,title,amount,date){
+            
+    $('#modal_cost_title').text(title);
+    $('#modal_cost_amount').text(amount);
+    $('#modal_cost_date').text(date);
+
+    $('#delete_cost_model').modal('show');
+    $("#modalCanel_cost").click(function () {
+        
+    });
+    costListId=id;
+
+    $("#modalDelete_cost").click(function () {
+     
+       
+        var cost=document.getElementById("cost_"+costListId);
+
+        cost.setAttribute('style','background:#f00;color:white;');
+
+        var ajax=new XMLHttpRequest();
+        ajax.onload =function(){
+            if(ajax.status==200 || ajax.readyState==4){
+                console.log(ajax.responseText);
+                fetchThePage();
+            }
+        };
+        ajax.open("POST","api/costs/delete.php",true);
+        ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        ajax.send("id="+costListId);
+
+    });
+}
+
+//sale of years
+function setSaleOfYearChar(sales){
+
+    var data=[];
+
+    for(var i=0;i<12;i++){
+        var month=i+1;
+        var current_sale=sales.filter(sale=>sale.month==month);
+        if(current_sale.length>0){
+            data[i]=current_sale[0].amount;
+        }else{
+            data[i]=0;
+        }
+        
+    }
+
+    var ctx = document.getElementById('project_sale_of_year');
+    if (ctx !== null) {
+        var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: "line",
+
+        // The data for our dataset
+        data: {
+            labels: [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+            ],
+            datasets: [
+            {
+                label: "",
+                backgroundColor: "transparent",
+                borderColor: "rgb(237, 42, 38)",
+                data,
+                lineTension: 0.3,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(255,255,255,1)",
+                pointHoverBackgroundColor: "rgba(255,255,255,1)",
+                pointBorderWidth: 2,
+                pointHoverRadius: 8,
+                pointHoverBorderWidth: 1
+            }
+            ]
+        },
+
+        // Configuration options go here
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+            display: false
+            },
+            layout: {
+            padding: {
+                right: 10
+            }
+            },
+            scales: {
+            xAxes: [
+                {
+                gridLines: {
+                    display: false
+                }
+                }
+            ],
+            yAxes: [
+                {
+                gridLines: {
+                    display: true,
+                    color: "#efefef",
+                    zeroLineColor: "#efefef",
+                },
+                ticks: {
+                    callback: function(value) {
+                    var ranges = [
+                        { divider: 1e6, suffix: "M" },
+                        { divider: 1e4, suffix: "k" }
+                    ];
+                    function formatNumber(n) {
+                        for (var i = 0; i < ranges.length; i++) {
+                        if (n >= ranges[i].divider) {
+                            return (
+                            (n / ranges[i].divider).toString() + ranges[i].suffix
+                            );
+                        }
+                        }
+                        return n;
+                    }
+                    return formatNumber(value);
+                    }
+                }
+                }
+            ]
+            },
+            tooltips: {
+            callbacks: {
+                title: function(tooltipItem, data) {
+                return data["labels"][tooltipItem[0]["index"]];
+                },
+                label: function(tooltipItem, data) {
+                return "MMK " + data["datasets"][0]["data"][tooltipItem["index"]];
+                }
+            },
+            responsive: true,
+            intersect: false,
+            enabled: true,
+            titleFontColor: "#333",
+            bodyFontColor: "#686f7a",
+            titleFontSize: 12,
+            bodyFontSize: 14,
+            backgroundColor: "rgba(256,256,256,0.95)",
+            xPadding: 20,
+            yPadding: 10,
+            displayColors: false,
+            borderColor: "rgba(220, 220, 220, 0.9)",
+            borderWidth: 2,
+            caretSize: 10,
+            caretPadding: 15
+            }
+        }
+        });
+    }
+}
+export{deletePayment,deleteCost};
