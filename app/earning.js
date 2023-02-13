@@ -51,6 +51,10 @@ const cost_offset=View.findById('cost_offset');
 const ui_subscriber=View.findById('subscriber');
 const ui_subscriber_totay=View.findById('subscriber_today');
 const ui_total_sale_today=View.findById('total_sale_today');
+const ui_subscriber_all_time=View.findById('subscriber_all_time');
+const ui_total_Sale_all_time=View.findById('total_Sale_all_time');
+const ui_total_sale_current_month=View.findById('total_sale_current_month');
+
 
 //cost adding
 const ui_msg_box_success=View.findById('msg_box_success');
@@ -62,12 +66,23 @@ const ui_btn_add_cost=View.findById('btn_add_cost');
 const ui_fail_msg=View.findById('fail_msg');
 const ui_success_msg=View.findById('success_msg');
 
+// date selector
+const ui_year_container=View.findById('year_container');
+const ui_month_container=View.findById('month_container');
+const ui_year_selector=View.findById('year_selector');
+const ui_month_selector=View.findById('month_selector');
+
+
 let paymentAdapter,costAdapter;
 
 fetchThePage();
+setYears();
+setMonths();
+
 function fetchThePage(){
 
     var ajax=new XMLHttpRequest();
+    console.log('req data',reqData);
     ajax.onload =function(){
         if(ajax.status==200 || ajax.readyState==4){
             loadUI(JSON.parse(ajax.responseText));
@@ -88,6 +103,7 @@ function loadUI(data){
 
     View.setText(total_earning,earings.total);
     View.setText(total_cost,projectCosts.total_cost);
+    View.setText(ui_total_sale_current_month,earings.total);
    
     View.setText(net_earning,netEarning);
 
@@ -115,16 +131,32 @@ function loadUI(data){
     }
 
     var salesOfYear=data.saleOfYear;
-    console.log(salesOfYear);
-    setSaleOfYearChar(salesOfYear);
+    if(salesOfYear) setSaleOfYearChar(salesOfYear);
+
+    var saleOfMonth=data.saleOfMonth;
+    if(saleOfMonth){
+        console.log('saleOfMonths ',saleOfMonth);
+        setSaleOfMonthChart(saleOfMonth);
+    }
+   
 
     var saleOfDay=data.saleOfDay;
     if(saleOfDay.total_amount!=null){
         View.setText(ui_total_sale_today,saleOfDay.total_amount);
+        View.setText(ui_subscriber_totay,saleOfDay.total_subscriber);
     }else{
         View.setText(ui_total_sale_today,0);
+        View.setText(ui_subscriber_totay,0);
     }
-    View.setText(ui_subscriber_totay,saleOfDay.total_subscriber);
+   
+    var saleOfAllTime=data.saleOfAllTime;
+    if(saleOfAllTime.amount!=null){
+        View.setText(ui_total_Sale_all_time,saleOfAllTime.amount);
+        View.setText(ui_subscriber_all_time,saleOfAllTime.subscriber);
+    }else{
+        View.setText(ui_total_Sale_all_time,0);
+        View.setText(ui_subscriber_all_time,0);
+    }
 
 }
 
@@ -136,6 +168,25 @@ payment_offset.addEventListener("change",function(){
     });
 });
 
+ui_month_selector.addEventListener("change",function(){
+    req.month=ui_month_selector.value;
+    reqData+="&month="+req.month;
+
+    View.setVisibility(main_view,false);
+    View.setVisibility(main_pb,true);
+
+    fetchThePage();
+});
+
+ui_year_selector.addEventListener("change",function(){
+
+    req.year=ui_year_selector.value;
+    reqData+="&year="+req.year;
+    View.setVisibility(main_view,false);
+    View.setVisibility(main_pb,true);
+
+    fetchThePage();
+});
 
 btnFirstPaymentList.addEventListener("click",function(){
     paymentAdapter.firstPage((info)=>{
@@ -322,6 +373,51 @@ function deleteCost(id,title,amount,date){
     });
 }
 
+
+function setYears(){
+    let currentYear= new Date().getFullYear();
+    for(var i=currentYear;i>=2022;i--){
+        ui_year_container.innerHTML+=`
+            <div class="item" data-value="${i}">${i}</div>
+        `;
+    }
+}
+
+function setMonths(){
+    let months =[
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+        ];
+
+    for(var i=0;i<months.length;i++){
+        ui_month_container.innerHTML+=`
+              <div class="item" data-value="${(i+1)}">${months[i]}</div>
+        `;
+    }    
+  
+}
+
+function daysInThisMonth() {
+  var now = new Date();
+  var currentMonth;
+  if(req.month){
+    currentMonth=req.month;
+  }else {
+    currentMonth=now.getMonth();
+  }
+  return new Date(now.getFullYear(), currentMonth+1, 0).getDate();
+}
+
 //sale of years
 function setSaleOfYearChar(sales){
 
@@ -455,4 +551,133 @@ function setSaleOfYearChar(sales){
         });
     }
 }
+
+function setSaleOfMonthChart(sales){
+
+    var data=[];
+
+    for(var i=0;i<daysInThisMonth();i++){
+        var day=i+1;
+        var current_sale=sales.filter(sale=>sale.day==day);
+        if(current_sale.length>0){
+            data[i]=current_sale[0].amount;
+        }else{
+            data[i]=0;
+        }
+        
+    }
+
+    var dayLabels=[];
+    for(var i=0;i<daysInThisMonth();i++){
+        dayLabels[i]=i+1;
+    }
+
+
+    var ctx = document.getElementById('project_sale_of_month');
+    if (ctx !== null) {
+        var chart = new Chart(ctx, {
+        // The type of chart we want to create
+        type: "line",
+
+        
+
+        // The data for our dataset
+        data: {
+            labels: dayLabels,
+            datasets: [
+            {
+                label: "",
+                backgroundColor: "transparent",
+                borderColor: "rgb(237, 42, 38)",
+                data,
+                lineTension: 0.3,
+                pointRadius: 5,
+                pointBackgroundColor: "rgba(255,255,255,1)",
+                pointHoverBackgroundColor: "rgba(255,255,255,1)",
+                pointBorderWidth: 2,
+                pointHoverRadius: 8,
+                pointHoverBorderWidth: 1
+            }
+            ]
+        },
+
+        // Configuration options go here
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+            display: false
+            },
+            layout: {
+            padding: {
+                right: 10
+            }
+            },
+            scales: {
+            xAxes: [
+                {
+                gridLines: {
+                    display: false
+                }
+                }
+            ],
+            yAxes: [
+                {
+                gridLines: {
+                    display: true,
+                    color: "#efefef",
+                    zeroLineColor: "#efefef",
+                },
+                ticks: {
+                    callback: function(value) {
+                    var ranges = [
+                        { divider: 1e6, suffix: "M" },
+                        { divider: 1e4, suffix: "k" }
+                    ];
+                    function formatNumber(n) {
+                        for (var i = 0; i < ranges.length; i++) {
+                        if (n >= ranges[i].divider) {
+                            return (
+                            (n / ranges[i].divider).toString() + ranges[i].suffix
+                            );
+                        }
+                        }
+                        return n;
+                    }
+                    return formatNumber(value);
+                    }
+                }
+                }
+            ]
+            },
+            tooltips: {
+            callbacks: {
+                title: function(tooltipItem, data) {
+                return data["labels"][tooltipItem[0]["index"]];
+                },
+                label: function(tooltipItem, data) {
+                return "MMK " + data["datasets"][0]["data"][tooltipItem["index"]];
+                }
+            },
+            responsive: true,
+            intersect: false,
+            enabled: true,
+            titleFontColor: "#333",
+            bodyFontColor: "#686f7a",
+            titleFontSize: 12,
+            bodyFontSize: 14,
+            backgroundColor: "rgba(256,256,256,0.95)",
+            xPadding: 20,
+            yPadding: 10,
+            displayColors: false,
+            borderColor: "rgba(220, 220, 220, 0.9)",
+            borderWidth: 2,
+            caretSize: 10,
+            caretPadding: 15
+            }
+        }
+        });
+    }
+}
+
 export{deletePayment,deleteCost};

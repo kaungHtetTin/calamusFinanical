@@ -37,20 +37,20 @@
     $last_sale_req['year']=$year;
 
     $total_sale=$Payment->getTotalSaleAmount($total_sale_req);
-    $response['total_sale']['current']=$total_sale;
+    $response['total_sale']['current']=$total_sale['amount'];
 
     $last_sale=$Payment->getTotalSaleAmount($last_sale_req);
-    $response['total_sale']['last']=$last_sale;
+    $response['total_sale']['last']=$last_sale['amount'];
 
 
     foreach($projects as $project){
         $total_sale_req['major']=$project['keyword'];
         $total_sale=$Payment->getTotalSaleAmount($total_sale_req);
-        $project['total_sale']=$total_sale;
+        $project['total_sale']=$total_sale['amount'];
 
         $last_sale_req['major']=$project['keyword'];
         $last_sale=$Payment->getTotalSaleAmount($last_sale_req);
-        $project['last_sale']=$last_sale;
+        $project['last_sale']=$last_sale['amount'];
 
         $response['projects'][]=$project;
     }
@@ -58,5 +58,5 @@
     $saleOfYear=$Payment-> getSaleOfYear($_GET);
     $response['saleOfYear']=$saleOfYear;
     echo json_encode($response);
-
+    
 ?>

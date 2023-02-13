@@ -36,18 +36,22 @@
 
                 <div class="date_selector">
                     <div class="ui selection dropdown skills-search vchrt-dropdown">
-                        <input name="date" type="hidden" value="default">
+                        <input name="date" type="hidden" value="default" id="year_selector">
                         <i class="dropdown icon d-icon"></i>
-                        <div class="text">Item Sales</div>
-                        <div class="menu">
-                            <div class="item" data-value="0">Total Sales</div>
-                            <div class="item" data-value="1">2020</div>
+                        <div class="text">Years</div>
+                        <div class="menu" id="year_container">
+                          
+                            
                         </div>
                     </div>
-                    <div class="date_list152">
-                        <a href="#">All Time</a> /
-                        <a href="#">2020</a> /
-                        <a href="#">April</a>
+
+                    <div class="ui selection dropdown skills-search vchrt-dropdown">
+                        <input name="date" type="hidden" value="default" id="month_selector">
+                        <i class="dropdown icon d-icon"></i>
+                        <div class="text">Month</div>
+                        <div class="menu" id="month_container">
+                          
+                        </div>
                     </div>
                 </div>
                 
@@ -79,6 +83,18 @@
                             </div>
                             <div class="card-body p-5" style="height: 450px;">
                                 <canvas id="project_sale_of_year" class="chartjs"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-12 col-md-12">
+                        <!-- Sales Graph -->
+                        <div class="card card-default analysis_card p-0" data-scroll-height="450">
+                            <div class="card-header">
+                                <h2>Sales Of The Month</h2>
+                            </div>
+                            <div class="card-body p-5" style="height: 450px;">
+                                <canvas id="project_sale_of_month" class="chartjs"></canvas>
                             </div>
                         </div>
                     </div>
@@ -134,10 +150,40 @@
                                 <li>
                                     <div class="country_item">
                                         <div class="country_item_left">
+                                            <span>Total Sale</span>
+                                        </div>
+                                        <div class="country_item_right">
+                                            <span id="total_sale_current_month"> </span>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                        </div>
+
+                        <div class="top_countries mt-50">
+                            <div class="top_countries_title">
+                                <h2>All Time</h2>
+                            </div>
+                            <ul class="country_list">
+                                <li>
+                                    <div class="country_item">
+                                        <div class="country_item_left">
                                             <span>Subscriber</span>
                                         </div>
                                         <div class="country_item_right">
-                                            <span> </span>
+                                            <span id="subscriber_all_time"> </span>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <li>
+                                    <div class="country_item">
+                                        <div class="country_item_left">
+                                            <span>Total sale</span>
+                                        </div>
+                                        <div class="country_item_right">
+                                            <span id="total_Sale_all_time"> </span>
                                         </div>
                                     </div>
                                 </li>

@@ -139,11 +139,11 @@ class Payment{
         }
 
 
-        $query="SELECT SUM(amount) as amount FROM payments $whereClase";
+        $query="SELECT SUM(amount) as amount ,count(*) as subscriber FROM payments $whereClase";
         $DB=new Database($query);
 
       
-        return $DB->read($query)[0]['amount'];
+        return $DB->read($query)[0];
 
     }
 
@@ -170,6 +170,32 @@ class Payment{
                 group by MONTH(date); 
             ";
         }
+        $result=$DB->read($query);
+        return $result;
+    }
+
+    function getSaleOfMonth($req){
+        if(isset($req['year'])){
+            $year=$req['year'];
+        }else{
+            $year=date('Y');
+        }
+
+        if(isset($req['month'])){
+            $month=$req['month'];
+        }else{
+            $month=date('m');
+        }
+
+        $DB=new Database();
+        
+        $major=$req['major'];
+        $query="
+                SELECT sum(amount) as amount,DAY(date) as day from payments 
+                where YEAR(date)=$year and MONTH(date)=$month and  major='$major'
+                group by DAY(date); 
+            ";
+
         $result=$DB->read($query);
         return $result;
     }
