@@ -23,5 +23,18 @@
                     
                 </ul>
             </div>
+
+            <div class="left_section">
+                <ul>
+                    <li class="menu--item">
+                        <a href="remaining-balance.php" class="menu--link  <?php if($path=='remaining-balance') echo 'active' ?>" title="Dashboard">
+                             <i class='uil uil-wallet menu--icon'></i>
+                            <span class="menu--label">Remaining Balance</span>
+                        </a>
+                    </li>
+                     
+                </ul>
+
+            </div>
         </div>
     </nav>

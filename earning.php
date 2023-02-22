@@ -81,7 +81,7 @@
                             <div class="card-header">
                                 <h2>Sales Of The Year</h2>
                             </div>
-                            <div class="card-body p-5" style="height: 450px;">
+                            <div class="card-body p-5" style="height: 450px;" id="project_sale_of_year_container">
                                 <canvas id="project_sale_of_year" class="chartjs"></canvas>
                             </div>
                         </div>
@@ -93,7 +93,7 @@
                             <div class="card-header">
                                 <h2>Sales Of The Month</h2>
                             </div>
-                            <div class="card-body p-5" style="height: 450px;">
+                            <div class="card-body p-5" style="height: 450px;" id="project_sale_of_month_container">
                                 <canvas id="project_sale_of_month" class="chartjs"></canvas>
                             </div>
                         </div>
