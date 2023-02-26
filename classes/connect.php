@@ -2,11 +2,12 @@
 
 class Database {
 
-	private $host="localhost";
+	private $host="82.180.143.139";
 	private $username="u608908096_kht_navy";
 	private $password="kHt_5241";
 	private $db="u608908096_easyenglish";
 
+	//this is git ignore file
 
 	function connect(){
 		$connection=mysqli_connect($this->host,$this->username,$this->password,$this->db);
@@ -45,9 +46,3 @@ class Database {
 	}
 
 }
-
- 
-
-
-
-

@@ -350,6 +350,3 @@
         import * as Remaining from './app/remaining-balance.js';
         window.deleteTransaction=Remaining.deleteTransaction;
     </script>
-
-    
-

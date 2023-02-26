@@ -40,5 +40,4 @@
         $result['msg']="Method not allow";
         echo json_encode($result);
     }
-
 ?>

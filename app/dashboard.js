@@ -29,6 +29,7 @@ function fetchThePage(){
     var ajax=new XMLHttpRequest();
     ajax.onload =function(){
         if(ajax.status==200 || ajax.readyState==4){
+            console.log(ajax.responseText);
             loadUI(JSON.parse(ajax.responseText));
         }else{
             console.log('somethine wrong');

@@ -1,4 +1,3 @@
-
 <?php 
 
     $title="Financial | Dashboard";
@@ -14,7 +13,7 @@
 
     
 ?>
-
+<!-- This is git ignore version -->
 <!-- Body Start -->
 <div class="wrapper">
 
@@ -77,5 +76,4 @@
 
     <script src="vendor/charts/Chart.min.js"></script>
     <script> const req=JSON.parse(`<?php echo json_encode($_GET);?>`); </script>
-
     <script  type="module" src="./app/dashboard.js"> </script>
