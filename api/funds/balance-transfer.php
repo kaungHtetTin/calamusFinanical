@@ -51,7 +51,7 @@
         $result=$Fund->add($req_transfer);
 
         $req_receive['title']=$title_receive;
-        $req_receive['amount']=-1*$amount;
+        $req_receive['amount']=$amount;
         $req_receive['type']=0;
         $req_receive['staff_id']=$to;
         $req_receive['transferring_id']=$transfer_id;

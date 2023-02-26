@@ -49,14 +49,14 @@ class Fund{
         $DB=new Database();
         $query="Select * from funds where staff_id=$staff_id order by id desc limit 1";
         $lastTrans=$DB->read($query)[0];
-
         $current_balance=$lastTrans['current_balance'];
-        $current_balance=$current_balance-$amount;
-
-
-        if($amount<0){
-            $amount=$amount*(-1);
+        
+        if($type==0){
+            $current_balance=$current_balance+$amount;
+        }else{
+             $current_balance=$current_balance-$amount;
         }
+        
 
         $query="INSERT INTO funds (title,amount,current_balance,type,staff_id,transfer_id) VALUE ('$title',$amount,'$current_balance','$type',$staff_id,$transferring_id)";
         $result=$DB->save($query);
