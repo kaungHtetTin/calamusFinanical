@@ -56,4 +56,45 @@ export function projectEarning(project){
             </a>
         </div>
     `;
-}   
+}  
+
+export function transaction(transaction){
+    return `
+        <tr id="transaction_${transaction.id}">										
+            <td>${transaction.title} </td>	
+            <td>${transaction.type==0? 'IN' :'OUT'}</td>	
+            <td>${transaction.amount}</td>	
+            <td>${transaction.current_balance}</td>
+            <td>${transaction.date}</td>
+
+            <td class="text-center">
+                <span
+                onclick="deleteTransaction(
+                ${transaction.id},
+                'transaction_${transaction.id}')" 
+                
+                title="Delete" class="gray-s"><i class="uil uil-trash-alt"></i></span>
+            </td>
+        </tr>
+    `;
+}
+
+export function comfirmDialogue(msg,id){
+    return `
+    <div id="modal_comfirm${id}" class="modal">
+            <!-- Modal content -->
+        <div class="modal-content" style="width:50%;margin:auto;margin-top:70px;">
+            
+            <h4 style="margin: 30px;">${msg}</h4>
+            <br><br>
+
+            <div style="margin:30px; padding-left:10%;padding-right:10%;">
+                <button class="btn btn-primary" id="modalCanel${id}" style="float:left">Cancel</button>
+                <button class="btn btn-danger" id="modalComfirm${id}" style="float:right">Delete</button>
+            </div>
+
+        </div>
+
+    </div>
+    `;
+}

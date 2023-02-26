@@ -46,6 +46,8 @@ const btnLastCostList=View.findById('btnLastCostList');
 const btnFirstCostList=View.findById('btnFirstCostList');
 const cost_row_counter=View.findById('cost_row_counter');
 const cost_offset=View.findById('cost_offset');
+const ui_project_sale_of_month_container=View.findById('project_sale_of_month_container');
+const ui_project_sale_of_year_container=View.findById('project_sale_of_year_container');
 
 //overview
 const ui_subscriber=View.findById('subscriber');
@@ -71,6 +73,7 @@ const ui_year_container=View.findById('year_container');
 const ui_month_container=View.findById('month_container');
 const ui_year_selector=View.findById('year_selector');
 const ui_month_selector=View.findById('month_selector');
+
 
 
 let paymentAdapter,costAdapter;
@@ -279,6 +282,7 @@ function addNewCost(){
     }
 
     View.setVisibility(ui_pb_cost_adding,true);
+    
     var ajax=new XMLHttpRequest();
     ajax.onload =function(){
         if(ajax.status==200 || ajax.readyState==4){
@@ -433,8 +437,10 @@ function setSaleOfYearChar(sales){
         }
         
     }
-
+    clearChart(ui_project_sale_of_year_container,'project_sale_of_year');
     var ctx = document.getElementById('project_sale_of_year');
+   
+ 
     if (ctx !== null) {
         var chart = new Chart(ctx, {
         // The type of chart we want to create
@@ -552,6 +558,8 @@ function setSaleOfYearChar(sales){
     }
 }
 
+
+
 function setSaleOfMonthChart(sales){
 
     var data=[];
@@ -571,9 +579,11 @@ function setSaleOfMonthChart(sales){
     for(var i=0;i<daysInThisMonth();i++){
         dayLabels[i]=i+1;
     }
-
-
+    
+    clearChart(ui_project_sale_of_month_container,'project_sale_of_month');
     var ctx = document.getElementById('project_sale_of_month');
+   
+
     if (ctx !== null) {
         var chart = new Chart(ctx, {
         // The type of chart we want to create
@@ -678,6 +688,13 @@ function setSaleOfMonthChart(sales){
         }
         });
     }
+}
+
+
+function clearChart(container,chartId){
+    container.innerHTML=`
+        <canvas id="${chartId}" class="chartjs"></canvas>
+    `;
 }
 
 export{deletePayment,deleteCost};
