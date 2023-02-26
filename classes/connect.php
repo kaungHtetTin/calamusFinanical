@@ -2,7 +2,7 @@
 
 class Database {
 
-	private $host="82.180.143.139";
+	private $host="localhost";
 	private $username="u608908096_kht_navy";
 	private $password="kHt_5241";
 	private $db="u608908096_easyenglish";
