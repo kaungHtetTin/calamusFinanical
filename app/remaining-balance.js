@@ -107,6 +107,15 @@ function loadUI(data){
         kaungAdapter.firstPage((info)=>{
             View.setText(ui_row_counter_kaung,info);
         });
+    }else{
+        ui_transaction_contrainer_kht.innerHTML=`
+            <tr>
+                <td  colspan="6">
+                     <div style="text-align:center; padding:15px; width=100%;"> No transaction </div>
+                </td>
+            </tr>
+               
+        `;
     }
 
     if(min_transactions){
@@ -114,6 +123,15 @@ function loadUI(data){
         minAdapter.firstPage((info)=>{
              View.setText(ui_row_counter_min,info);
         })
+    }else{
+        ui_transaction_contrainer_mhk.innerHTML=`
+            <tr>
+                <td  colspan="6">
+                     <div style="text-align:center; padding:15px; width=100%;"> No transaction </div>
+                </td>
+            </tr>
+               
+        `;
     }
 
 }

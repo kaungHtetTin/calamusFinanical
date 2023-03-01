@@ -122,6 +122,15 @@ function loadUI(data){
         paymentAdapter.firstPage((info)=>{
             View.setText(payment_row_counter,info);
         });
+    }else{
+        payment_container.innerHTML=`
+            <tr>
+                <td  colspan="5">
+                     <div style="text-align:center; padding:15px; width=100%;"> No payment </div>
+                </td>
+            </tr>
+               
+        `;
     }
 
     View.setText(total_cost_list,projectCosts.total_cost);
@@ -131,6 +140,15 @@ function loadUI(data){
             costAdapter.firstPage((info)=>{
             View.setText(cost_row_counter,info);
         });
+    }else{
+         cost_container.innerHTML=`
+            <tr>
+                <td  colspan="4">
+                     <div style="text-align:center; padding:15px; width=100%;"> No Cost </div>
+                </td>
+            </tr>
+               
+        `;
     }
 
     var salesOfYear=data.saleOfYear;
