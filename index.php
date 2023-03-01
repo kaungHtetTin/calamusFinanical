@@ -2,7 +2,7 @@
 
     $title="Financial | Dashboard";
     $path="Dashboard";
-
+    session_start();
     //UI
     include('layouts/header.php');
     include('layouts/nav-bar.php');
@@ -10,6 +10,10 @@
 
     include('classes/connect.php');
     include('classes/payment.php');
+    include('classes/login.php');
+
+    $login= new Login();
+	$login->check_login($_SESSION['calamus_financial']);
 
     
 ?>

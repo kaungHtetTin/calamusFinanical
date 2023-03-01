@@ -3,7 +3,7 @@
             <div class="left_section">
                 <ul>
                     <li class="menu--item">
-                        <a href="dashboard.php" class="menu--link  <?php if($path=='Dashboard') echo 'active' ?>" title="Dashboard">
+                        <a href="index.php" class="menu--link  <?php if($path=='Dashboard') echo 'active' ?>" title="Dashboard">
                             <i class="uil uil-apps menu--icon"></i>
                             <span class="menu--label">Dashboard</span>
                         </a>

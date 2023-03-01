@@ -8,6 +8,7 @@ class Database {
 	private $db="u608908096_easyenglish";
 
 	//this is git ignore file
+	// I want to ignore this file
 
 	function connect(){
 		$connection=mysqli_connect($this->host,$this->username,$this->password,$this->db);
