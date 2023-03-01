@@ -25,6 +25,16 @@ const ui_transaction_contrainer_kht=View.findById('transaction_contrainer_kht');
 const ui_transaction_contrainer_mhk=View.findById('transaction_contrainer_mhk');
 const ui_row_counter_min=View.findById('row_counter_min');
 const ui_row_counter_kaung=View.findById('row_counter_kaung');
+const ui_transaction_offset_kaung=View.findById('transaction_offset_kaung');
+const ui_transaction_offset_min=View.findById('transaction_offset_min');
+const btnFirstKaungList=View.findById('btnFirstKaungList');
+const btnPrevkaungList=View.findById('btnPrevkaungList');
+const btnNextKaungList=View.findById('btnNextKaungList');
+const btnLastkaungList=View.findById('btnLastkaungList');
+const btnFirstMinList=View.findById('btnFirstMinList');
+const btnPrevMinList=View.findById('btnPrevMinList');
+const btnNextMinList=View.findById('btnNextMinList');
+const btnLastMinList=View.findById('btnLastMinList');
 
 // add transaction
 const ui_btn_add_transaction=View.findById('btn_add_transaction');
@@ -52,6 +62,8 @@ const ui_pb_balance_transfer=View.findById('pb_balance_transfer');
 // date time selector
 const ui_year_container=View.findById('year_container');
 const ui_month_container=View.findById('month_container');
+const ui_year_selector=View.findById('year_selector');
+const ui_month_selector=View.findById('month_selector');
 
 const ui_modal_container=View.findById('modal_container');
 
@@ -91,20 +103,82 @@ function loadUI(data){
     var min_transactions=data.min_transactions;
 
     if(kaung_transactions){
-        kaungAdapter =new Adapter(kaung_transactions,ui_transaction_contrainer_kht,Item.transaction,10);
+        kaungAdapter =new Adapter(kaung_transactions,ui_transaction_contrainer_kht,Item.transaction,20);
         kaungAdapter.firstPage((info)=>{
             View.setText(ui_row_counter_kaung,info);
         });
     }
 
     if(min_transactions){
-        minAdapter=new Adapter(min_transactions,ui_transaction_contrainer_mhk,Item.transaction,10);
+        minAdapter=new Adapter(min_transactions,ui_transaction_contrainer_mhk,Item.transaction,20);
         minAdapter.firstPage((info)=>{
              View.setText(ui_row_counter_min,info);
         })
     }
 
 }
+
+ui_transaction_offset_kaung.addEventListener("change",()=>{
+    kaungAdapter.setOffsetRange(parseInt(ui_transaction_offset_kaung.value),(info)=>{
+        View.setText(ui_row_counter_kaung,info);
+    });
+});
+
+ui_transaction_offset_min.addEventListener("change",()=>{
+    minAdapter.setOffsetRange(parseInt(ui_transaction_offset_min.value),(info)=>{
+        View.setText(ui_row_counter_min,info);
+    });
+});
+
+btnFirstKaungList.addEventListener("click",()=>{
+    kaungAdapter.firstPage((info)=>{
+        View.setText(ui_row_counter_kaung,info);
+    })
+});
+
+btnNextKaungList.addEventListener("click",()=>{
+    kaungAdapter.nextPage((info)=>{
+         View.setText(ui_row_counter_kaung,info);
+    });
+});
+
+btnPrevkaungList.addEventListener("click",()=>{
+    kaungAdapter.prevPage((info)=>{
+        View.setText(ui_row_counter_kaung,info);
+    });
+});
+
+btnLastkaungList.addEventListener("click",()=>{
+    kaungAdapter.lastPage((info)=>{
+        View.setText(ui_row_counter_kaung,info);
+    })
+});
+
+btnFirstMinList.addEventListener("click",()=>{
+    minAdapter.firstPage((info)=>{
+        View.setText(ui_row_counter_min,info);
+    })
+});
+
+btnPrevMinList.addEventListener("click",()=>{
+    minAdapter.prevPage((info)=>{
+        View.setText(ui_row_counter_min,info);
+    });
+});
+
+btnNextMinList.addEventListener("click",()=>{
+    minAdapter.nextPage((info)=>{
+         View.setText(ui_row_counter_min,info);
+    });
+});
+
+btnLastMinList.addEventListener("click",()=>{
+    minAdapter.lastPage((info)=>{
+        View.setText(ui_row_counter_min,info);
+    })
+});
+
+
 
 ui_btn_add_transaction.addEventListener("click",()=>{
     var title=ui_input_transc_title.value;
@@ -307,5 +381,26 @@ function setMonths(){
     }    
   
 }
+
+ui_month_selector.addEventListener("change",function(){
+    req.month=ui_month_selector.value;
+    reqData+="&month="+req.month;
+
+    View.setVisibility(main_view,false);
+    View.setVisibility(main_pb,true);
+
+    fetchThePage();
+});
+
+ui_year_selector.addEventListener("change",function(){
+
+    req.year=ui_year_selector.value;
+    reqData+="&year="+req.year;
+    View.setVisibility(main_view,false);
+    View.setVisibility(main_pb,true);
+
+    fetchThePage();
+});
+
 
 export{deleteTransaction};
