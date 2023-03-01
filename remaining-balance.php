@@ -105,7 +105,7 @@
 
                             <div class="text" style="padding: 5px 0px; margin-right: 5px;">Show rows:</div>
                             <div  class="ui dropdown table-offset-dropdown">
-                                <input name="date" type="hidden" value="10" id="payment_offset">
+                                <input name="date" type="hidden" value="10" id="transaction_offset_kaung">
                                 <div class="text" style="margin-left:7px;" >10</div>
                                 <div class="menu" >
                                     <div class="item" data-value="10">10</div>
@@ -119,10 +119,10 @@
                             <div id="row_counter_kaung" class="text" style="padding: 5px 0px; margin-right: 10px; margin-left:10px;"></div>
                 
                             <div class="date_list152">
-                                <span id="btnFirstPaymentList"><i class="fa fa-angle-double-left fa-fw" aria-hidden="true"></i></span> 
-                                <span id="btnPrevPaymentList"><i class="fa fa-angle-left fa-fw" aria-hidden="true"></i></span>
-                                <span id="btnNextPaymentList"><i class="fa fa-angle-right fa-fw" aria-hidden="true"></i></span>
-                                <span id="btnLastPaymentList"><i class="fa fa-angle-double-right fa-fw" aria-hidden="true"></i></span> 
+                                <span id="btnFirstKaungList"><i class="fa fa-angle-double-left fa-fw" aria-hidden="true"></i></span> 
+                                <span id="btnPrevkaungList"><i class="fa fa-angle-left fa-fw" aria-hidden="true"></i></span>
+                                <span id="btnNextKaungList"><i class="fa fa-angle-right fa-fw" aria-hidden="true"></i></span>
+                                <span id="btnLastkaungList"><i class="fa fa-angle-double-right fa-fw" aria-hidden="true"></i></span> 
                                 <a href="#"></a>
                             </div>
                         </div>
@@ -154,7 +154,7 @@
 
                             <div class="text" style="padding: 5px 0px; margin-right: 5px;">Show rows:</div>
                             <div  class="ui dropdown table-offset-dropdown">
-                                <input name="date" type="hidden" value="10" id="cost_offset">
+                                <input name="date" type="hidden" value="10" id="transaction_offset_min">
                                 <div class="text" style="margin-left:7px;" >10</div>
                                 <div class="menu" >
                                     <div class="item" data-value="10">10</div>
@@ -168,10 +168,10 @@
                             <div id="row_counter_min" class="text" style="padding: 5px 0px;  margin-right: 10px; margin-left:10px;"></div>
                 
                             <div class="date_list152">
-                                <span id="btnFirstCostList"><i class="fa fa-angle-double-left fa-fw" aria-hidden="true"></i></span> 
-                                <span id="btnPrevCostList"><i class="fa fa-angle-left fa-fw" aria-hidden="true"></i></span>
-                                <span id="btnNextCostList"><i class="fa fa-angle-right fa-fw" aria-hidden="true"></i></span>
-                                <span id="btnLastCostList"><i class="fa fa-angle-double-right fa-fw" aria-hidden="true"></i></span> 
+                                <span id="btnFirstMinList"><i class="fa fa-angle-double-left fa-fw" aria-hidden="true"></i></span> 
+                                <span id="btnPrevMinList"><i class="fa fa-angle-left fa-fw" aria-hidden="true"></i></span>
+                                <span id="btnNextMinList"><i class="fa fa-angle-right fa-fw" aria-hidden="true"></i></span>
+                                <span id="btnLastMinList"><i class="fa fa-angle-double-right fa-fw" aria-hidden="true"></i></span> 
                                 <a href="#"></a>
                             </div>
                         </div>
