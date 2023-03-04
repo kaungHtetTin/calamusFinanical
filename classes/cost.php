@@ -37,10 +37,34 @@
 
         }
 
+        function detail($id){
+            $DB=new Database();
+            $query="SELECT * FROM costs where id=$id";
+            $result=$DB->read($query);
+            return $result[0];
+        }
+
         function delete($id){
             $DB=new Database();
             $query="DELETE FROM costs where id=$id";
             $result=$DB->save($query);
+
+            if($result){
+                $response['status']="success";
+                $response['msg']="Cost deleted successfully";
+                return $response;
+            }else{
+                $result['status']="fail";
+                $result['msg']="An unexpected error occurred!";
+                return $response;
+            }
+        }
+
+        function deleteByTransferID($transfer_id){
+            $DB=new Database();
+            $query="DELETE FROM costs where transfer_id=$transfer_id";
+            $result=$DB->save($query);
+
             if($result){
                 $response['status']="success";
                 $response['msg']="Cost deleted successfully";
@@ -58,8 +82,14 @@
             $amount=$req['amount'];
             $major=$req['major'];
 
+            if(isset($req['transferring_id'])){
+                $transferring_id=$req['transferring_id'];
+            }else{
+                $transferring_id=0;
+            }
+
             $DB=new Database();
-            $query="INSERT INTO costs (title,amount,major) VALUE ('$title',$amount,'$major')";
+            $query="INSERT INTO costs (title,amount,major,transfer_id) VALUE ('$title',$amount,'$major',$transferring_id)";
             $result=$DB->save($query);
             if($result){
                 $response['status']="success";

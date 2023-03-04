@@ -56,6 +56,8 @@ const ui_total_sale_today=View.findById('total_sale_today');
 const ui_subscriber_all_time=View.findById('subscriber_all_time');
 const ui_total_Sale_all_time=View.findById('total_Sale_all_time');
 const ui_total_sale_current_month=View.findById('total_sale_current_month');
+const ui_subscriber_current_year=View.findById('subscriber_current_year');
+const ui_total_sale_current_year=View.findById('total_sale_current_year');
 
 
 //cost adding
@@ -107,7 +109,8 @@ function loadUI(data){
     View.setText(total_earning,earings.total);
     View.setText(total_cost,projectCosts.total_cost);
     View.setText(ui_total_sale_current_month,earings.total);
-   
+    
+
     View.setText(net_earning,netEarning);
 
     View.setVisibility(main_view,true);
@@ -177,6 +180,15 @@ function loadUI(data){
     }else{
         View.setText(ui_total_Sale_all_time,0);
         View.setText(ui_subscriber_all_time,0);
+    }
+
+    var totalSaleOfCurrentYear=data.totalSaleOfCurrentYear;
+    if(totalSaleOfCurrentYear.amount!=null){
+        View.setText(ui_total_sale_current_year,totalSaleOfCurrentYear.amount);
+        View.setText(ui_subscriber_current_year,totalSaleOfCurrentYear.subscriber);
+    }else{
+        View.setText(ui_total_sale_current_year,0);
+        View.setText(ui_subscriber_current_year,0);
     }
 
 }

@@ -79,6 +79,40 @@ export function transaction(transaction){
     `;
 }
 
+export function staff(staff){
+    return `
+          <tr id="staff_${staff.id}">										
+            <td>${staff.name} </td>	
+            <td>${staff.rank} </td>	
+            <td>${staff.project} </td>	
+            <td>${staff.present==1? 'IN' :'OUT'}</td>	
+            <td><a href="salary.php?staff_id=${staff.id}">PAY </a> </td>
+            <td class="text-center">
+                <span
+                <span
+                title="Delete" class="gray-s"><i class="uil uil-trash-alt"></i></span>
+            </td>
+        </tr>
+    `;
+}
+
+export function salary(salary){
+    return `
+          <tr id="salary_${salary.id}">										
+            <td>${salary.project} </td>	
+            <td>${salary.amount} </td>	
+            <td>${salary.date} </td>	
+            <td>
+                <span
+                 onclick="deleteSalary(
+                ${salary.id},
+                'salary_${salary.id}')"
+                title="Delete" class="gray-s"><i class="uil uil-trash-alt"></i></span>
+            </td>
+        </tr>
+    `;
+}
+
 export function comfirmDialogue(msg,id){
     return `
     <div id="modal_comfirm${id}" class="modal">

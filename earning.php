@@ -166,6 +166,36 @@
                             </ul>
                         </div>
 
+                         <div class="top_countries mt-50">
+                            <div class="top_countries_title">
+                                <h2>Current Year</h2>
+                            </div>
+                            <ul class="country_list">
+                                <li>
+                                    <div class="country_item">
+                                        <div class="country_item_left">
+                                            <span>Subscriber</span>
+                                        </div>
+                                        <div class="country_item_right">
+                                            <span id="subscriber_current_year"> </span>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                                <li>
+                                    <div class="country_item">
+                                        <div class="country_item_left">
+                                            <span>Total Sale</span>
+                                        </div>
+                                        <div class="country_item_right">
+                                            <span id="total_sale_current_year"> </span>
+                                        </div>
+                                    </div>
+                                </li>
+                                
+                            </ul>
+                        </div>
+
                         <div class="top_countries mt-50">
                             <div class="top_countries_title">
                                 <h2>All Time</h2>

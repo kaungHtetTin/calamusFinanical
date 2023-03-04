@@ -15,6 +15,9 @@
     $req['major']=$_GET['major'];
     $totalSaleAllTime=$Payment->getTotalSaleAmount($req);
 
+    $req['year']= $year=date('Y');
+    $totalSaleOfCurrentYear=$Payment->getTotalSaleAmount($req);
+
 	$Cost=new Cost();
 	$projectCost=$Cost->getCosts($_GET);
 
@@ -24,6 +27,7 @@
     $response['saleOfYear']=$saleOfYear;
     $response['saleOfMonth']=$saleOfMonth;
     $response['saleOfDay']=$totalSaleOfDay;
+    $response['totalSaleOfCurrentYear']=$totalSaleOfCurrentYear;
     $response['saleOfAllTime']=$totalSaleAllTime;
 
     echo json_encode($response);
