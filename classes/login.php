@@ -10,7 +10,7 @@ class Login
 		$password=addslashes($data['password']);
 		//$password=hash("md5", $password);
 		
-		if($password=='@$calamus$@'){
+		if($password=='@$calamus5241$@'){
             $_SESSION['calamus_financial']="access";
             return $error;
         }else{
