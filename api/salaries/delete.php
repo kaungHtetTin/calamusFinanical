@@ -7,25 +7,23 @@
     if($_SERVER['REQUEST_METHOD']=='POST'){
       
         $id=$_POST['id'];
-        $Fund=new Fund();
+        $Salary=new Salary();
 
-        $fund=$Fund->detail($id);
+        $salary=$Salary->detail($id);
 
-  
-
-        $transfer_id=$fund['transfer_id'];
+        $transfer_id=$salary['transfer_id'];
         if($transfer_id==0){
-            $result=$Fund->delete($id);
+            $result=$Salary->delete($id);
             echo json_encode($result);
             return;
         }else{
-            $Fund->deleteByTransferID($transfer_id);
+            $Salary->deleteByTransferID($transfer_id);
 
             $Cost=new Cost();
             $Cost->deleteByTransferID($transfer_id);
             
-            $Salary=new Salary();
-            $Salary->deleteByTransferID($transfer_id);
+            $Fund=new Fund();
+            $Fund->deleteByTransferID($transfer_id);
         }
 
     }else{

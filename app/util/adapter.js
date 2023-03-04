@@ -11,8 +11,8 @@ class Adapter{
         this.data=data;
         this.container=container;
         this.Layout=Layout;
-       
         this.offset=offset;
+
         this.size=this.data.length;
         this.lastIndex=Math.floor(this.size/this.offset);
     }
