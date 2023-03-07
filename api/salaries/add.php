@@ -12,6 +12,7 @@
         $amount=$_POST['amount'];
         $project=$_POST['project'];
         $pay_from=$_POST['pay_from'];
+        $add_project_cost=$_POST['add_for_cost'];
 
         if($staff_id=="" || $amount =="" || !is_numeric($amount) || $project=="" || $pay_from==""){
             $result['status']="fail";
@@ -32,13 +33,16 @@
         $staff=$Staff->getAStaff($staff_id);
 
         $staff_name=$staff['name'];
-        $cost['title']="Salary payment to $staff_name";
-        $cost['amount']=$amount;
-        $cost['major']=$project;
-        $cost['transferring_id']=$transfer_id;
 
-        $Cost =new Cost();
-        $Cost->add($cost);
+        if($add_project_cost=="true"){
+            $cost['title']="Salary payment to $staff_name";
+            $cost['amount']=$amount;
+            $cost['major']=$project;
+            $cost['transferring_id']=$transfer_id;
+
+            $Cost =new Cost();
+            $Cost->add($cost);
+        }
 
         // reduce balance from founder
         $req['title']="Salary payment to $staff_name";

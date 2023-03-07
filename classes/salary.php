@@ -13,7 +13,17 @@ class Salary{
         }
 
         $DB=new Database();
-        $query="SELECT * FROM salaries  WHERE staff_id=$staff_id AND YEAR(date)=$year";
+        $query="SELECT 
+        salaries.id,
+        salaries.amount,
+        salaries.date,
+        course_categories.project_name
+        FROM salaries  
+        JOIN course_categories on keyword=project
+        WHERE staff_id=$staff_id AND YEAR(date)=$year
+        ORDER BY date
+        ";
+        
         $result=$DB->read($query);
         return $result;
     }

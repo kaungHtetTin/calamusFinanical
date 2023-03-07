@@ -31,6 +31,7 @@ const ui_fail_msg=View.findById('fail_msg');
 const ui_success_msg=View.findById('success_msg');
 const ui_pb_form_adding=View.findById('pb_form_adding');
 const ui_btn_add=View.findById('btn_add');
+const ui_input_add_for_cost=View.findById('input_add_for_cost');
 
 //modal
 const ui_modal_container=View.findById('modal_container');
@@ -97,7 +98,7 @@ function loadUI(data){
 
     if(staff.project!='all'){
         View.setVisibility(ui_form_project_selector,false);
-        ui_form_container.setAttribute('style','height:300px');
+        ui_form_container.setAttribute('style','height:350px');
         req.project=staff.project;
     }
 
@@ -163,9 +164,13 @@ ui_btn_add.addEventListener("click",()=>{
 
 
 function paySalary(){
+
     var staff_id=staff.id;
     var amount=ui_input_amount.value;
     var project="";
+
+    var add_for_cost=ui_input_add_for_cost.checked;
+
     if(staff.project=='all'){
         project=ui_input_project.value;
     }else{
@@ -223,12 +228,13 @@ function paySalary(){
     };
     ajax.open("POST","api/salaries/add.php",true);
     ajax.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    ajax.send(`staff_id=${staff_id}&amount=${amount}&project=${project}&pay_from=${pay_from}`);
+    ajax.send(`staff_id=${staff_id}&amount=${amount}&project=${project}&pay_from=${pay_from}&add_for_cost=${add_for_cost}`);
 
 }
 
 let deleting_item_id;
 function deleteSalary(id,view_id){
+
 
     ui_modal_container.innerHTML=Item.comfirmDialogue('Do you really want to delete this salary payment',id);
 

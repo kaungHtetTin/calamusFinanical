@@ -80,7 +80,7 @@
                                         <th scope="col">Rank</th>
                                         <th scope="col">Project</th>
                                         <th scope="col">Status</th>
-                                        <th colspan="2" scope="col" class="text-center" >Action</th>	
+                                        <th colspan="3" scope="col" class="text-center" >Action</th>	
                                     </tr>
                                 </thead>
                                 <tbody id="staff_container">
@@ -116,74 +116,10 @@
                             </div>
                         </div>
 
-
-						<!-- add a staff -->
-                        <div class="date_selector">
-                            <h4>Add a new staff</h4>
+                        <br><br>
+                        <div>
+                               <a href="add-new-staff.php" class="upload_btn" title="Add new staff">Add New Staff</a>
                         </div>
-                        <div class="card card-default analysis_card p-0" >
-                            <div id="msg_box_success" style="display:none">
-                                <div class="bg-success" style="padding: 7px;color:white;" id="success_msg">
-                                    
-                                </div>
-                            </div>
-
-                            <div id="msg_box_fail" style="display:none">
-                                <div class="bg-danger" style="padding: 7px;color:white;" id="fail_msg">
-                                    
-                                </div>
-                            </div>
-
-                            <div class="modal-body" style="height: 400px;">
-                                <div id="pb_trans_adding" style="display:none">
-                                    <div style="padding: 150px 50%; text-align:center; position:absolute; background:hwb(0 100% 0% / 0.421)">
-                                        <div class="spin"></div>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade show active" id="nav-basic" role="tabpanel">
-                                    <div class="new-section mt-30">
-                                        <div class="form_group">
-                                            <label class="label25">Name*</label>
-                                            <input id="input_name" class="form_input_1" type="text" placeholder="Title here">
-                                        </div>
-                                    </div>
-
-                                    <div class="new-section mt-30">
-                                        <div class="form_group">
-                                            <label class="label25">Rank*</label>
-                                            <input id="input_rank" class="form_input_1" type="text" placeholder="Amount here">
-                                        </div>
-                                    </div>
-                                     
-                                    <div class="new-section mt-30">
-                                        <label class="label25">Project*</label>
-                                        <div class="ui fluid search selection dropdown focus cntry152">
-                                            <input type="hidden" name="transaction_type" class="prompt srch_explore" id="input_project">
-                                            <i class="dropdown icon"></i>
-                                                <div class="default text">Select Here</div>
-                                                <div class="menu">
-                                                <div class="item" data-value="all">All</div>
-                                                <div class="item" data-value="english">Easy English</div>
-                                                <div class="item" data-value="korea">Easy Korean</div>
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="new-section mt-30" width="150px">
-                                    <button id="btn_add_staff" type="button" class="main-btn">Submit</button> 
-                                   
-                                </div>
-                                
-                               
-
-                            </div>
-
-                            
-                        </div>
-
                     </div>
 
 				</div>

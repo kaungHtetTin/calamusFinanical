@@ -87,6 +87,7 @@ export function staff(staff){
             <td>${staff.project} </td>	
             <td>${staff.present==1? 'IN' :'OUT'}</td>	
             <td><a href="salary.php?staff_id=${staff.id}">PAY </a> </td>
+            <td><a href="staffs-detail.php?staff_id=${staff.id}">Detail </a> </td>
             <td class="text-center">
                 <span
                 <span
@@ -99,7 +100,7 @@ export function staff(staff){
 export function salary(salary){
     return `
           <tr id="salary_${salary.id}">										
-            <td>${salary.project} </td>	
+            <td>${salary.project_name}</td>	
             <td>${salary.amount} </td>	
             <td>${salary.date} </td>	
             <td>

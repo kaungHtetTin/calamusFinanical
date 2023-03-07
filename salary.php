@@ -120,7 +120,7 @@
                                 </div>
                             </div>
 
-                            <div class="modal-body" style="height: 400px;" id="form_container">
+                            <div class="modal-body" style="height: 450px;" id="form_container">
                                 <div id="pb_form_adding" style="display:none">
                                     <div style="padding: 150px 50%; text-align:center; position:absolute; background:hwb(0 100% 0% / 0.421)">
                                         <div class="spin"></div>
@@ -151,7 +151,7 @@
                                         </div>
                                     </div>
 
-                                     <div id="form_project_selector">
+                                    <div id="form_project_selector">
                                         <div class="new-section mt-30">
                                             <label class="label25">Pay From*</label>
                                             <div class="ui fluid search selection dropdown focus cntry152">
@@ -165,6 +165,14 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div class="cogs-toggle mt-3">
+                                        <label class="switch">
+                                            <input type="checkbox" id="input_add_for_cost" value="">
+                                            <span></span>
+                                        </label>
+                                        <label for="input_add_for_cost" class="lbl-quiz">Add amount to project cost</label>
                                     </div>
 
                                 </div>
