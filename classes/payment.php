@@ -229,6 +229,35 @@ class Payment{
         $result=$DB->save($query);
         return $result;
     }
+
+
+    function getPendingPayment(){
+        $DB=new Database();
+        $query="SELECT 
+            payments.id,
+            project_name,
+            learner_phone,
+            learner_name,
+            payments.date,
+            payments.amount,
+            screenshot
+            FROM payments
+            jOIN learners ON learner_phone= payments.user_id
+            JOIN course_categories on keyword=major
+            WHERE payments.approve = 0
+        ";
+
+        $result=$DB->read($query);
+        return $result;
+    }
+
+    function approve($req){
+        $id=$req['id'];
+        $DB=new Database();
+        $query="UPDATE payments SET approve=1 WHERE id=$id";
+        $result=$DB->save($query);
+        return $result;
+    }
 }
 
 ?>

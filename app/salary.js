@@ -234,8 +234,7 @@ function paySalary(){
 
 let deleting_item_id;
 function deleteSalary(id,view_id){
-
-
+    
     ui_modal_container.innerHTML=Item.comfirmDialogue('Do you really want to delete this salary payment',id);
 
     $('#modal_comfirm'+id).modal('show');

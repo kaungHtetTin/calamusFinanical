@@ -114,6 +114,29 @@ export function salary(salary){
     `;
 }
 
+export function pendingPayment(payment){
+    return `
+          <tr id="payment_${payment.id}">										
+            <td>${payment.project_name}</td>	
+            <td>${payment.learner_name} </td>
+            <td>${payment.learner_phone} </td>
+            <td>${payment.amount} </td>	
+            <td>${payment.date} </td>
+            <td> <a href="${payment.screenshot}"> <img src="${payment.screenshot}" style="width:50px; height:50px; border:1px solid black; "/> </a>
+            <td class="text-center">
+                <span
+                 onclick="approvePayment(
+                ${payment.id},
+                'payment_${payment.id}',
+                '${payment.screenshot}')"
+                class="upload_btn" 
+                title="Approve">Approve</span>
+            </td>
+        </tr>
+    `;
+}
+
+
 export function comfirmDialogue(msg,id){
     return `
     <div id="modal_comfirm${id}" class="modal">
@@ -126,6 +149,28 @@ export function comfirmDialogue(msg,id){
             <div style="margin:30px; padding-left:10%;padding-right:10%;">
                 <button class="btn btn-primary" id="modalCanel${id}" style="float:left">Cancel</button>
                 <button class="btn btn-danger" id="modalComfirm${id}" style="float:right">Delete</button>
+            </div>
+
+        </div>
+
+    </div>
+    `;
+}
+
+export function paymentApproveDialog(id,screenshot){
+    return `
+    <div id="modal_comfirm${id}" class="modal">
+            <!-- Modal content -->
+        <div class="modal-content" style="width:65%;margin:auto;margin-top:70px;">
+            
+            <h4 style="margin: 30px;">Do you really want to approve this payment</h4>
+            <br><br>
+
+            <img src="${screenshot}" style="height:160px; width:90px; display: block; margin-left: auto; margin-right: auto; "/>
+
+            <div style="margin:30px; padding-left:10%;padding-right:10%;">
+                <button class="btn btn-primary" id="modalCanel${id}" style="float:left">Cancel</button>
+                <button class="btn btn-danger" id="modalComfirm${id}" style="float:right">Approve</button>
             </div>
 
         </div>

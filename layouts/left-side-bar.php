@@ -39,6 +39,13 @@
                             <span class="menu--label">Staffs and Salary</span>
                         </a>
                     </li>
+
+                    <li class="menu--item">
+                        <a href="approve-payment.php" class="menu--link  <?php if($path=='Approve-payment') echo 'active' ?>" title="Approve Payment">
+                             <i class='uil uil-wallet menu--icon'></i>
+                            <span class="menu--label">Approve Payment</span>
+                        </a>
+                    </li>
                      
                 </ul>
 
