@@ -1,6 +1,14 @@
 <?php 
     $title="Financial | Earnings";
     $path=$_GET['path'];
+
+    $major=$_GET['major'];
+
+    if($major=='korea'){
+        echo "<h3>No longer access this page</h3>";
+
+        return;
+    }
 ?>
 
 <!DOCTYPE html>

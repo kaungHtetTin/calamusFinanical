@@ -9,10 +9,10 @@
     
     $email="";
  
-    
+    $login=new Login();
     if($_SERVER['REQUEST_METHOD']=='POST'){
         
-        $login=new Login();
+        
         $result=$login->evaluate($_POST);
         
         if($result!=""){
@@ -29,6 +29,15 @@
             //echo "login access";
         }
         
+    }
+
+    if(isset($_COOKIE['calamus_financial'])){
+       $data['password']= $_COOKIE['calamus_financial'];
+       $result=$login->evaluate($data);
+       if($result==""){
+            header("Location: index.php");
+            die;
+       }
     }
 
 ?>

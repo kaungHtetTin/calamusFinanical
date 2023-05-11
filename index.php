@@ -4,9 +4,8 @@
     $path="Dashboard";
     session_start();
     //UI
-    include('layouts/header.php');
-    include('layouts/nav-bar.php');
-    include('layouts/left-side-bar.php');
+    
+    
 
     include('classes/connect.php');
     include('classes/payment.php');
@@ -15,6 +14,11 @@
     $login= new Login();
 	$login->check_login($_SESSION['calamus_financial']);
 
+
+
+    include('layouts/header.php');
+    include('layouts/nav-bar.php');
+    include('layouts/left-side-bar.php');
     
 ?>
 <!-- This is git ignore version -->
