@@ -4,13 +4,15 @@
     session_start();
     
 	//UI
-    include('layouts/header.php');
-    include('layouts/nav-bar.php');
-    include('layouts/left-side-bar.php');
+    
     include('classes/login.php');
 
     $login= new Login();
 	$login->check_login($_SESSION['calamus_financial']);
+
+    include('layouts/header.php');
+    include('layouts/nav-bar.php');
+    include('layouts/left-side-bar.php');
     
 ?>
 

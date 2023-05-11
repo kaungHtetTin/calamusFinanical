@@ -4,8 +4,6 @@
     $path="Dashboard";
     session_start();
     //UI
-    
-    
 
     include('classes/connect.php');
     include('classes/payment.php');
