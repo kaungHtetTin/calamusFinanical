@@ -58,6 +58,7 @@ const ui_total_Sale_all_time=View.findById('total_Sale_all_time');
 const ui_total_sale_current_month=View.findById('total_sale_current_month');
 const ui_subscriber_current_year=View.findById('subscriber_current_year');
 const ui_total_sale_current_year=View.findById('total_sale_current_year');
+const ui_previous_month_amount=View.findById('previous_month_amount');
 
 
 //cost adding
@@ -101,6 +102,7 @@ function fetchThePage(){
 }
 
 function loadUI(data){
+    console.log(data);
     const earings=data.earnings;
     const projectCosts=data.projectCosts;
 
@@ -158,9 +160,10 @@ function loadUI(data){
     if(salesOfYear) setSaleOfYearChar(salesOfYear);
 
     var saleOfMonth=data.saleOfMonth;
+    var saleOfLastMonth=data.saleOfLastMonth;
     if(saleOfMonth){
         console.log('saleOfMonths ',saleOfMonth);
-        setSaleOfMonthChart(saleOfMonth);
+        setSaleOfMonthChart(saleOfMonth,saleOfLastMonth);
     }
    
 
@@ -590,9 +593,12 @@ function setSaleOfYearChar(sales){
 
 
 
-function setSaleOfMonthChart(sales){
+function setSaleOfMonthChart(sales,lastSales){
 
-    var data=[];
+    var data=[]; // current month;
+    var data2=[];  // previous month
+    var previous_month_amount=0;
+    var now=new Date();
 
     for(var i=0;i<daysInThisMonth();i++){
         var day=i+1;
@@ -602,8 +608,18 @@ function setSaleOfMonthChart(sales){
         }else{
             data[i]=0;
         }
+
+        var last_sale=lastSales.filter(sale=>sale.day==day);
+        if(last_sale.length>0){
+            data2[i]=last_sale[0].amount;
+            if(day<=now.getDate()) previous_month_amount+=parseInt(data2[i]);
+        }else{
+            data2[i]=0;
+        }
         
     }
+
+    View.setText(ui_previous_month_amount,previous_month_amount);
 
     var dayLabels=[];
     for(var i=0;i<daysInThisMonth();i++){
@@ -611,37 +627,39 @@ function setSaleOfMonthChart(sales){
     }
     
     clearChart(ui_project_sale_of_month_container,'project_sale_of_month');
-    var ctx = document.getElementById('project_sale_of_month');
-   
-
-    if (ctx !== null) {
-        var chart = new Chart(ctx, {
-        // The type of chart we want to create
+    
+    var dual = document.getElementById("project_sale_of_month");
+  
+    if (dual !== null) {
+        var urChart = new Chart(dual, {
         type: "line",
-
-        
-
-        // The data for our dataset
         data: {
             labels: dayLabels,
             datasets: [
             {
-                label: "",
-                backgroundColor: "transparent",
-                borderColor: "rgb(237, 42, 38)",
-                data,
-                lineTension: 0.3,
-                pointRadius: 5,
+                label: "Old",
+                pointRadius: 4,
                 pointBackgroundColor: "rgba(255,255,255,1)",
-                pointHoverBackgroundColor: "rgba(255,255,255,1)",
                 pointBorderWidth: 2,
-                pointHoverRadius: 8,
-                pointHoverBorderWidth: 1
+                fill: false,
+                backgroundColor: "transparent",
+                borderWidth: 2,
+                borderColor: "#ed2a26",
+                data: data
+            },
+            {
+                label: "New",
+                fill: false,
+                pointRadius: 4,
+                pointBackgroundColor: "rgba(255,255,255,1)",
+                pointBorderWidth: 2,
+                backgroundColor: "transparent",
+                borderWidth: 2,
+                borderColor: "rgba(255, 230, 0, 0.3)",
+                data: data2
             }
             ]
         },
-
-        // Configuration options go here
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -718,6 +736,7 @@ function setSaleOfMonthChart(sales){
         }
         });
     }
+
 }
 
 

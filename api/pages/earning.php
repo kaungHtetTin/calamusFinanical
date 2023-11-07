@@ -2,6 +2,7 @@
     include('../../classes/connect.php');
     include('../../classes/payment.php');
     include('../../classes/cost.php');
+    include('../../classes/util.php');
 
  
 
@@ -10,6 +11,12 @@
 	$payments=$earnings['payments'];
     $saleOfYear=$Payment->getSaleOfYear($_GET);
     $saleOfMonth=$Payment->getSaleOfMonth($_GET);
+
+    $Util=new Util();
+    $reqData=$Util->getLastMonth($_GET);
+    $reqData['major']=$_GET['major'];
+    $saleOfPreviousMonth=$Payment->getSaleOfMonth($reqData);
+
     $totalSaleOfDay=$Payment->getTotalSaleOfDay($_GET);
 
     $req['major']=$_GET['major'];
@@ -26,6 +33,7 @@
     $response['projectCosts']=$projectCost;
     $response['saleOfYear']=$saleOfYear;
     $response['saleOfMonth']=$saleOfMonth;
+    $response['saleOfLastMonth']=$saleOfPreviousMonth;
     $response['saleOfDay']=$totalSaleOfDay;
     $response['totalSaleOfCurrentYear']=$totalSaleOfCurrentYear;
     $response['saleOfAllTime']=$totalSaleAllTime;

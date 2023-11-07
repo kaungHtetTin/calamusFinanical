@@ -103,6 +103,15 @@
                             <div class="card-body p-5" style="height: 450px;" id="project_sale_of_month_container">
                                 <canvas id="project_sale_of_month" class="chartjs"></canvas>
                             </div>
+                            <div style="margin-left:70px;display:flex;padding:10px;">
+                                Current Month <div style="height:5px; width: 30px; background:#ed2a26;margin-left:10px;margin-right:30px;margin-top:5px;"></div>
+                                Previous Month <div style="height:5px; width: 30px; background:rgba(255, 230, 0, 0.3);margin-left:10px;margin-top:5px;"></div>
+                            </div>
+                            <br>
+                            <div style="margin-left:70px;margin-bottom:30px;padding:10px;">
+                               <span style="font-weight:bold;color:#333">Note:</span> We got <span id="previous_month_amount"></span> mmk on this day of previous month.
+                            </div>
+                            
                         </div>
                     </div>
 
