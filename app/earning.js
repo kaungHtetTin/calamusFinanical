@@ -609,10 +609,14 @@ function setSaleOfMonthChart(sales,lastSales){
             data[i]=0;
         }
 
-        var last_sale=lastSales.filter(sale=>sale.day==day);
-        if(last_sale.length>0){
-            data2[i]=last_sale[0].amount;
-            if(day<=now.getDate()) previous_month_amount+=parseInt(data2[i]);
+        if(lastSales){
+            var last_sale=lastSales.filter(sale=>sale.day==day);
+            if(last_sale.length>0){
+                data2[i]=last_sale[0].amount;
+                if(day<=now.getDate()) previous_month_amount+=parseInt(data2[i]);
+            }else{
+                data2[i]=0;
+            }
         }else{
             data2[i]=0;
         }

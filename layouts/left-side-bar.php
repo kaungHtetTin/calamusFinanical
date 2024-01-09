@@ -20,6 +20,13 @@
                             <span class="menu--label">Easy Korean</span>
                         </a>
                     </li>
+
+                    <li class="menu--item">
+                        <a href="earning.php?path=Easy Japanese&major=japanese" class="menu--link <?php if($path=='Easy Japanese') echo 'active' ?>" title="Easy Japanese">
+                            <i class='uil uil-book-alt menu--icon'></i>
+                            <span class="menu--label">Easy Japanese</span>
+                        </a>
+                    </li>
                     
                 </ul>
             </div>

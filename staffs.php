@@ -49,6 +49,7 @@
                             <div class="item" data-value="all">All</div>
                             <div class="item" data-value="english">Easy English</div>
                             <div class="item" data-value="korea">Easy Koean</div>
+                            <div class="item" data-value="japanese">Easy Japanese</div>
                         </div>
                     </div>
 
@@ -63,8 +64,7 @@
                         </div>
                     </div>
                 </div>
-
-
+                
                 <div class="row">
                    
                     <div class="col-lg-12 col-md-12">
