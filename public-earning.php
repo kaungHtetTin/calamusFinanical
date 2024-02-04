@@ -56,6 +56,13 @@
 
             <div class="sa4d25">
                 <div class="container-fluid">	
+                
+                    <div class="row">
+                        <div class="col-lg-12">	
+                            <h2 class="st_title"><i class="uil uil-dollar-sign"></i> Earning ( <?php echo $path; ?> )</h2>
+                        
+                        </div>					
+                    </div>
 
                     <div class="date_selector">
                         <div class="ui selection dropdown skills-search vchrt-dropdown">
@@ -119,6 +126,15 @@
                                 <div class="card-body p-5" style="height: 450px;" id="project_sale_of_month_container">
                                     <canvas id="project_sale_of_month" class="chartjs"></canvas>
                                 </div>
+                                <div style="margin-left:70px;display:flex;padding:10px;">
+                                    Current Month <div style="height:5px; width: 30px; background:#ed2a26;margin-left:10px;margin-right:30px;margin-top:5px;"></div>
+                                    Previous Month <div style="height:5px; width: 30px; background:rgba(255, 230, 0, 0.3);margin-left:10px;margin-top:5px;"></div>
+                                </div>
+                                <br>
+                                <div style="margin-left:70px;margin-bottom:30px;padding:10px;">
+                                <span style="font-weight:bold;color:#333">Note:</span> We got <span id="previous_month_amount"></span> mmk on this day of previous month.
+                                </div>
+                                
                             </div>
                         </div>
 
@@ -177,6 +193,36 @@
                                             </div>
                                             <div class="country_item_right">
                                                 <span id="total_sale_current_month"> </span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+
+                            <div class="top_countries mt-50">
+                                <div class="top_countries_title">
+                                    <h2>Current Year</h2>
+                                </div>
+                                <ul class="country_list">
+                                    <li>
+                                        <div class="country_item">
+                                            <div class="country_item_left">
+                                                <span>Subscriber</span>
+                                            </div>
+                                            <div class="country_item_right">
+                                                <span id="subscriber_current_year"> </span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    
+                                    <li>
+                                        <div class="country_item">
+                                            <div class="country_item_left">
+                                                <span>Total Sale</span>
+                                            </div>
+                                            <div class="country_item_right">
+                                                <span id="total_sale_current_year"> </span>
                                             </div>
                                         </div>
                                     </li>
@@ -328,7 +374,6 @@
                                     <a href="#"></a>
                                 </div>
                             </div>
-
                         </div>
 
                     </div>
@@ -336,17 +381,23 @@
                     </div>
                 
                 </div>
-                <?php include('layouts/footer.php');?>
             </div>
-        
+          
+            <?php include('layouts/footer.php');?>
         </div>
     </div>
+	<!-- The Modal -->
+  
     <script src="vendor/charts/Chart.min.js"></script>
     <script> const req=JSON.parse(`<?php echo json_encode($_GET);?>`); </script>
 
     <script  type="module">
         import * as Earning from './app/earning.js';
+        window.deletePayment=Earning.deletePayment;
+        window.deleteCost=Earning.deleteCost;
     </script>
+
     
+
 </body>
 </html>
