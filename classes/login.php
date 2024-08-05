@@ -10,8 +10,6 @@ class Login
 		$password=addslashes($data['password']);
 		//$password=hash("md5", $password);
 		
-         
-
 		if($password=='@$calamus5241$@'){
             $_SESSION['calamus_financial']="access";
             setcookie('calamus_financial',$password , time() + (86400 * 30), "/");

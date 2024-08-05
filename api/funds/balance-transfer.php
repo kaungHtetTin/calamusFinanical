@@ -4,6 +4,10 @@
     include('../../classes/fund.php');
 
     if($_SERVER['REQUEST_METHOD']=='POST'){
+
+        $staffs[1]="Kaung Htet Tin";
+        $staffs[2]="Min Htet Kyaw";
+        $staffs[3]="Visa";
       
         $to=$_POST['to'];
         $from=$_POST['from'];
@@ -34,12 +38,14 @@
         $Fund=new Fund();
 
         if($to==2){
-            $title="Transfer to Min Htet Kyaw";
-            $title_receive="Received from Kaung Htet Tin";
+            
         }else{
             $title="Transfer to Kaung Htet Tin";
             $title_receive="Received from Min Htet Kyaw";
         }
+
+        $title="Transfer to ".$staffs[$to];
+        $title_receive="Received from ".$staffs[$from];
 
         $transfer_id=microtime(true);
 

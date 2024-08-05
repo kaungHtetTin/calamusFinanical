@@ -20,21 +20,34 @@ const main_pb=View.findById('main_pb');
 
 const ui_kht_balance=View.findById('kht_balance');
 const ui_mhk_balance=View.findById('mhk_balance');
+const ui_visa_balance=View.findById('visa_balance');
 
 const ui_transaction_contrainer_kht=View.findById('transaction_contrainer_kht');
 const ui_transaction_contrainer_mhk=View.findById('transaction_contrainer_mhk');
+const ui_transaction_contrainer_visa=View.findById('transaction_contrainer_visa');
+
 const ui_row_counter_min=View.findById('row_counter_min');
 const ui_row_counter_kaung=View.findById('row_counter_kaung');
+const ui_row_counter_visa=View.findById('row_counter_visa');
+
 const ui_transaction_offset_kaung=View.findById('transaction_offset_kaung');
 const ui_transaction_offset_min=View.findById('transaction_offset_min');
+const ui_transaction_offset_visa=View.findById('transaction_offset_visa');
+
 const btnFirstKaungList=View.findById('btnFirstKaungList');
 const btnPrevkaungList=View.findById('btnPrevkaungList');
 const btnNextKaungList=View.findById('btnNextKaungList');
 const btnLastkaungList=View.findById('btnLastkaungList');
+
 const btnFirstMinList=View.findById('btnFirstMinList');
 const btnPrevMinList=View.findById('btnPrevMinList');
 const btnNextMinList=View.findById('btnNextMinList');
 const btnLastMinList=View.findById('btnLastMinList');
+
+const btnFirstVisaList=View.findById('btnFirstVisaList');
+const btnPrevVisaList=View.findById('btnPrevVisaList');
+const btnNextVisaList=View.findById('btnNextVisaList');
+const btnLastVisaList=View.findById('btnLastVisaList');
 
 // add transaction
 const ui_btn_add_transaction=View.findById('btn_add_transaction');
@@ -67,7 +80,7 @@ const ui_month_selector=View.findById('month_selector');
 
 const ui_modal_container=View.findById('modal_container');
 
-let kaungAdapter,minAdapter;
+let kaungAdapter,minAdapter,visaAdapter;
 
 
 fetchThePage();
@@ -98,9 +111,11 @@ function loadUI(data){
 
     View.setText(ui_kht_balance,data.kaung_balance);
     View.setText(ui_mhk_balance,data.min_balance);
+    View.setText(ui_visa_balance,data.visa_balance);
 
     var kaung_transactions=data.kaung_transactions
     var min_transactions=data.min_transactions;
+    var visa_transactions=data.visa_transactions;
 
     if(kaung_transactions){
         kaungAdapter =new Adapter(kaung_transactions,ui_transaction_contrainer_kht,Item.transaction,20);
@@ -134,6 +149,22 @@ function loadUI(data){
         `;
     }
 
+    if(visa_transactions){
+        visaAdapter=new Adapter(visa_transactions,ui_transaction_contrainer_visa,Item.transaction,20);
+        visaAdapter.firstPage((info)=>{
+             View.setText(ui_row_counter_visa,info);
+        })
+    }else{
+        ui_transaction_contrainer_visa.innerHTML=`
+            <tr>
+                <td  colspan="6">
+                     <div style="text-align:center; padding:15px; width=100%;"> No transaction </div>
+                </td>
+            </tr>
+               
+        `;
+    }
+
 }
 
 ui_transaction_offset_kaung.addEventListener("change",()=>{
@@ -145,6 +176,12 @@ ui_transaction_offset_kaung.addEventListener("change",()=>{
 ui_transaction_offset_min.addEventListener("change",()=>{
     minAdapter.setOffsetRange(parseInt(ui_transaction_offset_min.value),(info)=>{
         View.setText(ui_row_counter_min,info);
+    });
+});
+
+ui_transaction_offset_visa.addEventListener("change",()=>{
+    visaAdapter.setOffsetRange(parseInt(ui_transaction_offset_visa.value),(info)=>{
+        View.setText(ui_row_counter_visa,info);
     });
 });
 
@@ -196,6 +233,30 @@ btnLastMinList.addEventListener("click",()=>{
     })
 });
 
+
+btnFirstVisaList.addEventListener("click",()=>{
+    visaAdapter.firstPage((info)=>{
+        View.setText(ui_row_counter_visa,info);
+    })
+});
+
+btnPrevVisaList.addEventListener("click",()=>{
+    visaAdapter.prevPage((info)=>{
+        View.setText(ui_row_counter_visa,info);
+    });
+});
+
+btnNextVisaList.addEventListener("click",()=>{
+    visaAdapter.nextPage((info)=>{
+         View.setText(ui_row_counter_visa,info);
+    });
+});
+
+btnLastVisaList.addEventListener("click",()=>{
+    visaAdapter.lastPage((info)=>{
+        View.setText(ui_row_counter_visa,info);
+    })
+});
 
 
 ui_btn_add_transaction.addEventListener("click",()=>{

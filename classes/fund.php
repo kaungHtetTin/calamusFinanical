@@ -4,7 +4,12 @@ class Fund{
         $query="Select * from funds where staff_id=$staff_id order by id desc limit 1";
         $DB=new Database();
         $result=$DB->read($query);
-        return $result[0];
+        if($result){
+            return $result[0];
+        }else {
+            return array('current_balance'=>'0');
+        }
+        
     }
 
     function getTransactions($staff_id,$req){

@@ -62,17 +62,24 @@
 
 
                 <div class="row">
-                    <div class="col-md-6">						
+                    <div class="col-md-4">						
                         <div class="earning_steps">						
                             <p> Kaung Htet Tin </p>
                             <h2 id="kht_balance"> </h2>
                         </div>
                     </div>
 
-                    <div class="col-md-6">						
+                    <div class="col-md-4">						
                         <div class="earning_steps">						
                             <p> Min Htet Kyaw </p>
                             <h2 id="mhk_balance"> </h2>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">						
+                        <div class="earning_steps">						
+                            <p>Visa</p>
+                            <h2 id="visa_balance"> </h2>
                         </div>
                     </div>
 
@@ -178,6 +185,54 @@
                             </div>
                         </div>
 
+                        <div class="date_selector">
+                           <h4>Transaction (Visa)</h4>
+                        </div>
+
+                        <div class="table-responsive mt-30">
+                            <table class="table ucp-table earning__table">
+                                <thead class="thead-s">
+                                    <tr>
+                                        <th scope="col">Title</th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Current Balance</th>
+                                        <th scope="col">Date</th>		
+                                        <th colspan="2" scope="col" class="text-center" >Action</th>					
+                                    </tr>
+                                </thead>
+                                <tbody id="transaction_contrainer_visa">
+                                    
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                        <div style="display:flex;">
+
+                            <div class="text" style="padding: 5px 0px; margin-right: 5px;">Show rows:</div>
+                            <div  class="ui dropdown table-offset-dropdown">
+                                <input name="date" type="hidden" value="10" id="transaction_offset_visa">
+                                <div class="text" style="margin-left:7px;" >10</div>
+                                <div class="menu" >
+                                    <div class="item" data-value="10">10</div>
+                                    <div class="item" data-value="20">20</div>
+                                    <div class="item" data-value="50">50</div>
+                                    <div class="item" data-value="100">100</div>
+                                </div>
+                                <i class="dropdown icon d-icon"></i>
+                            </div>
+
+                            <div id="row_counter_visa" class="text" style="padding: 5px 0px;  margin-right: 10px; margin-left:10px;"></div>
+                
+                            <div class="date_list152">
+                                <span id="btnFirstVisaList"><i class="fa fa-angle-double-left fa-fw" aria-hidden="true"></i></span> 
+                                <span id="btnPrevVisaList"><i class="fa fa-angle-left fa-fw" aria-hidden="true"></i></span>
+                                <span id="btnNextVisaList"><i class="fa fa-angle-right fa-fw" aria-hidden="true"></i></span>
+                                <span id="btnLastVisaList"><i class="fa fa-angle-double-right fa-fw" aria-hidden="true"></i></span> 
+                                <a href="#"></a>
+                            </div>
+                        </div>
 
 						<!-- add a transaction -->
                         <div class="date_selector">
@@ -240,7 +295,7 @@
                                                 <div class="menu">
                                                 <div class="item" data-value="1">Kaung Htet Tin</div>
                                                 <div class="item" data-value="2">Min Htet Kyaw</div>
-                                                
+                                                 <div class="item" data-value="3">Visa</div>
                                             </div>
                                         </div>
                                     </div>
@@ -295,7 +350,7 @@
                                                 <div class="menu">
                                                 <div class="item" data-value="1">Kaung Htet Tin</div>
                                                 <div class="item" data-value="2">Min Htet Kyaw</div>
-                                                
+                                                <div class="item" data-value="3">Visa</div>
                                             </div>
                                         </div>
                                     </div>
@@ -309,7 +364,7 @@
                                                 <div class="menu">
                                                 <div class="item" data-value="1">Kaung Htet Tin</div>
                                                 <div class="item" data-value="2">Min Htet Kyaw</div>
-                                                
+                                                <div class="item" data-value="3">Visa</div>
                                             </div>
                                         </div>
                                     </div>

@@ -8,7 +8,6 @@ if(req.year){
     reqData+="&year="+req.year;
 }
 
-
 if(req.month){
     reqData+="&month="+req.month;
 }
