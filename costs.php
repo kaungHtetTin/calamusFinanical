@@ -1,11 +1,15 @@
 <?php
+/**
+ * Costs list and analytics. All cost data comes from the `costs` table only.
+ * For analysis you do not need to look up salaries or funds – the costs table is the single source of truth.
+ */
 $page_title = 'Costs';
 require_once __DIR__ . '/config.php';
 
 $base = FINANCIAL_BASE;
 $message = isset($_GET['msg']) ? trim($_GET['msg']) : '';
 
-// Filter by major (project keyword) + month/year – like Cost::getCosts
+// Filter by major (project keyword) + month/year
 $month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
 $year = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
 $date_from = sprintf('%04d-%02d-01', $year, $month);

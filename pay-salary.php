@@ -22,8 +22,20 @@ if (empty($payers_list)) {
     $payers_list = [['id' => 1, 'name' => 'Staff 1'], ['id' => 2, 'name' => 'Staff 2']];
 }
 
-// Employees: in-service staff excluding 1, 2, 3 (who receive salary); include project code
+// Employees: staff 1, 2 (owners – no cost record) + in-service staff excluding 1, 2, 3. staff_id 3 is not allowed.
 $staffs_list = [];
+$owners_recipients = $db->read("SELECT id, name, project FROM staffs WHERE id IN (1, 2) ORDER BY id");
+if ($owners_recipients) {
+    foreach ($owners_recipients as $s) {
+        $staffs_list[] = [
+            'id' => (int)$s['id'],
+            'name' => $s['name'] ?? 'Staff ' . $s['id'],
+            'project' => trim($s['project'] ?? ''),
+            'is_all' => false,
+            'skip_cost' => true,
+        ];
+    }
+}
 $staffs_from_db = $db->read("SELECT id, name, project FROM staffs WHERE id NOT IN (1, 2, 3) AND present = 1 ORDER BY name");
 if ($staffs_from_db) {
     foreach ($staffs_from_db as $s) {
@@ -33,15 +45,18 @@ if ($staffs_from_db) {
             'name' => $s['name'] ?? 'Staff ' . $s['id'],
             'project' => $proj,
             'is_all' => (strtolower($proj) === 'all'),
+            'skip_cost' => false,
         ];
     }
 }
 $allowed_recipient_ids = array_column($staffs_list, 'id');
 $staff_project_by_id = [];
 $staff_is_all_by_id = [];
+$staff_skip_cost_by_id = [];
 foreach ($staffs_list as $s) {
     $staff_project_by_id[$s['id']] = $s['project'];
     $staff_is_all_by_id[$s['id']] = $s['is_all'];
+    $staff_skip_cost_by_id[$s['id']] = !empty($s['skip_cost']);
 }
 
 // Projects for cost distribution (must load before POST handling for validation)
@@ -55,43 +70,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $date = $_POST['date'] ?? date('Y-m-d');
     $cost_category_id = (int)($_POST['cost_category_id'] ?? 0);
 
-    // Employee project: 'all' => show distribution; specific code => single cost for that project
+    $employee_skip_cost = !empty($staff_skip_cost_by_id[$staff_id]);
     $employee_is_all = !empty($staff_is_all_by_id[$staff_id]);
     $employee_project = isset($staff_project_by_id[$staff_id]) ? trim($staff_project_by_id[$staff_id]) : '';
 
-    // Per-project cost distribution (only used when employee project is 'all')
-    $cost_per_project = [];
-    $total_cost = 0;
-    if ($employee_is_all) {
-        foreach ($course_categories as $cc) {
-            $key = $cc['keyword'];
-            $amt = (int)($_POST['cost_project'][$key] ?? 0);
-            if ($amt > 0) {
-                $cost_per_project[$key] = $amt;
-                $total_cost += $amt;
-            }
-        }
-    } else {
-        // Single project: one cost record with employee's project and full amount
-        $cost_per_project = $employee_project !== '' ? [$employee_project => $amount] : [];
-        $total_cost = $amount;
-    }
-
-    if ($paid_by <= 0 || $staff_id <= 0 || $amount <= 0) {
+    // staff_id 3 is not allowed
+    if ($staff_id === 3) {
+        $error = 'This employee (staff 3) is not allowed to receive salary here.';
+    } elseif ($paid_by <= 0 || $staff_id <= 0 || $amount <= 0) {
         $error = 'Paid by, pay to (employee), and total amount are required.';
     } elseif (!in_array($paid_by, [1, 2], true)) {
         $error = 'Invalid payer. Only business owners (staff 1 or 2) can pay salary.';
     } elseif (!in_array($staff_id, $allowed_recipient_ids, true)) {
-        $error = 'Invalid employee. Select an in-service employee (excluding owners).';
-    } elseif ($cost_category_id <= 0) {
+        $error = 'Invalid employee. Select an allowed employee.';
+    } elseif (!$employee_skip_cost && $cost_category_id <= 0) {
         $error = 'Cost category is required so the salary is recorded in cost data.';
-    } elseif ($employee_is_all && $total_cost !== $amount) {
-        $error = 'Sum of cost per project (' . number_format($total_cost) . ' MMK) must equal total salary amount (' . number_format($amount) . ' MMK).';
-    } elseif ($employee_is_all && empty($cost_per_project)) {
-        $error = 'Enter at least one project with amount > 0 in the cost distribution.';
-    } elseif (!$employee_is_all && $employee_project === '') {
-        $error = 'Selected employee has no project set. Set project in Staff or use distribution (project = all).';
     } else {
+        // Per-project cost distribution (only when not skip_cost)
+        $cost_per_project = [];
+        $total_cost = 0;
+        if ($employee_skip_cost) {
+            $cost_per_project = [];
+            $total_cost = 0;
+        } elseif ($employee_is_all) {
+            foreach ($course_categories as $cc) {
+                $key = $cc['keyword'];
+                $amt = (int)($_POST['cost_project'][$key] ?? 0);
+                if ($amt > 0) {
+                    $cost_per_project[$key] = $amt;
+                    $total_cost += $amt;
+                }
+            }
+        } else {
+            $cost_per_project = $employee_project !== '' ? [$employee_project => $amount] : [];
+            $total_cost = $amount;
+        }
+
+        if (!$employee_skip_cost && $employee_is_all && $total_cost !== $amount) {
+            $error = 'Sum of cost per project (' . number_format($total_cost) . ' MMK) must equal total salary amount (' . number_format($amount) . ' MMK).';
+        } elseif (!$employee_skip_cost && $employee_is_all && empty($cost_per_project)) {
+            $error = 'Enter at least one project with amount > 0 in the cost distribution.';
+        } elseif (!$employee_skip_cost && !$employee_is_all && $employee_project === '') {
+            $error = 'Selected employee has no project set. Set project in Staff or use distribution (project = all).';
+        } else {
         $date_esc = $conn->real_escape_string($date);
 
         $recipient_row = $db->read("SELECT name FROM staffs WHERE id = $staff_id");
@@ -115,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $title_esc = $conn->real_escape_string($title);
 
         // Salary record: single project field – use first project with amount, or comma-separated keywords
-        $salary_project_value = implode(',', array_keys($cost_per_project));
+        $salary_project_value = $employee_skip_cost ? '' : implode(',', array_keys($cost_per_project));
 
         // 1. Fund: one transaction (total amount) from payer; transfer_id = fund row id
         $prev = $db->read("SELECT current_balance FROM funds WHERE staff_id = $paid_by ORDER BY id DESC LIMIT 1");
@@ -129,15 +150,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $salary_project_esc = $conn->real_escape_string($salary_project_value);
             // 2. Salary: one record (total amount)
             $db->save("INSERT INTO salaries (staff_id, amount, project, date, transfer_id) VALUES ($staff_id, $amount, '$salary_project_esc', '$date_esc', $fund_id)");
-            // 3. Cost: one record per project (distributed amount)
-            foreach ($cost_per_project as $major => $cost_amt) {
-                $major_esc = $conn->real_escape_string($major);
-                $db->save("INSERT INTO costs (cost_category_id, title, amount, major, date, transfer_id) VALUES ($cost_category_id, '$title_esc', $cost_amt, '$major_esc', '$date_esc', $fund_id)");
+            // 3. Cost: one record per project (only when not skip_cost for staff 1, 2)
+            if (!$employee_skip_cost) {
+                foreach ($cost_per_project as $major => $cost_amt) {
+                    $major_esc = $conn->real_escape_string($major);
+                    $db->save("INSERT INTO costs (cost_category_id, title, amount, major, date, transfer_id) VALUES ($cost_category_id, '$title_esc', $cost_amt, '$major_esc', '$date_esc', $fund_id)");
+                }
             }
-            header('Location: ' . $base . '/funds.php?msg=' . urlencode('Salary paid. Transaction, salary record and ' . count($cost_per_project) . ' cost record(s) updated.'));
+            $msg = $employee_skip_cost
+                ? 'Salary paid. Transaction and salary record updated (no cost record).'
+                : 'Salary paid. Transaction, salary record and ' . count($cost_per_project) . ' cost record(s) updated.';
+            header('Location: ' . $base . '/funds.php?msg=' . urlencode($msg));
             exit;
         } else {
             $error = 'Failed to record transaction.';
+        }
         }
     }
 }
@@ -155,7 +182,7 @@ if ($salary_category_id === 0 && !empty($cost_categories)) {
     $salary_category_id = (int)$cost_categories[0]['id'];
 }
 
-// Staff project info for JS: id => { project, is_all, project_name }
+// Staff project info for JS: id => { project, is_all, project_name, skip_cost }
 $staff_project_info_js = [];
 foreach ($staffs_list as $s) {
     $pname = $s['project'];
@@ -169,6 +196,7 @@ foreach ($staffs_list as $s) {
         'project' => $s['project'],
         'is_all' => $s['is_all'],
         'project_name' => $pname,
+        'skip_cost' => !empty($s['skip_cost']),
     ];
 }
 ?>
@@ -216,9 +244,9 @@ foreach ($staffs_list as $s) {
       <label>Date</label>
       <input type="date" name="date" value="<?php echo isset($_POST['date']) ? htmlspecialchars($_POST['date']) : date('Y-m-d'); ?>">
     </div>
-    <div class="form-group">
+    <div id="cost_category_wrap" class="form-group">
       <label>Cost category</label>
-      <select name="cost_category_id" required>
+      <select name="cost_category_id" id="cost_category_id_select">
         <option value="">Select (required for cost data)</option>
         <?php foreach ($cost_categories as $cc): ?>
         <option value="<?php echo (int)$cc['id']; ?>" <?php echo (isset($_POST['cost_category_id']) ? (int)$_POST['cost_category_id'] === (int)$cc['id'] : $salary_category_id === (int)$cc['id']) ? 'selected' : ''; ?>><?php echo htmlspecialchars($cc['title']); ?></option>
@@ -261,21 +289,34 @@ foreach ($staffs_list as $s) {
   var costInputs = document.querySelectorAll('.cost-project-input');
   var sumEl = document.getElementById('cost_sum');
 
+  var costCategoryWrap = document.getElementById('cost_category_wrap');
+  var costCategorySelect = document.getElementById('cost_category_id_select');
+
   function setCostSectionVisibility() {
     var staffId = employeeSelect ? parseInt(employeeSelect.value, 10) : 0;
     var info = staffId ? staffProjectById[staffId] : null;
-    if (info && info.is_all) {
-      if (distributionWrap) distributionWrap.style.display = '';
-      if (singleMsg) singleMsg.style.display = 'none';
-    } else if (info && info.project) {
+    var skipCost = info && info.skip_cost;
+    if (skipCost) {
+      if (costCategoryWrap) costCategoryWrap.style.display = 'none';
       if (distributionWrap) distributionWrap.style.display = 'none';
-      if (singleMsg) {
-        singleMsg.style.display = 'block';
-        if (singleNameEl) singleNameEl.textContent = info.project_name || info.project;
-      }
+      if (singleMsg) singleMsg.style.display = 'none';
+      if (costCategorySelect) costCategorySelect.removeAttribute('required');
     } else {
-      if (distributionWrap) distributionWrap.style.display = 'none';
-      if (singleMsg) singleMsg.style.display = 'none';
+      if (costCategoryWrap) costCategoryWrap.style.display = '';
+      if (costCategorySelect) costCategorySelect.setAttribute('required', 'required');
+      if (info && info.is_all) {
+        if (distributionWrap) distributionWrap.style.display = '';
+        if (singleMsg) singleMsg.style.display = 'none';
+      } else if (info && info.project) {
+        if (distributionWrap) distributionWrap.style.display = 'none';
+        if (singleMsg) {
+          singleMsg.style.display = 'block';
+          if (singleNameEl) singleNameEl.textContent = info.project_name || info.project;
+        }
+      } else {
+        if (distributionWrap) distributionWrap.style.display = 'none';
+        if (singleMsg) singleMsg.style.display = 'none';
+      }
     }
   }
 

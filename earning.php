@@ -25,7 +25,7 @@ $date_to = date('Y-m-t', strtotime($date_from));
 $total_earning = $db->read("SELECT COALESCE(SUM(amount), 0) AS total FROM payments WHERE major = '$major_esc' AND date >= '$date_from' AND date <= '$date_to'");
 $earning = $total_earning ? (int)$total_earning[0]['total'] : 0;
 
-// Total cost for this major in selected month (like Cost::getCosts)
+// Total cost for this major in selected month – from costs table only (no salaries/funds lookup)
 $total_cost = $db->read("SELECT COALESCE(SUM(amount), 0) AS total FROM costs WHERE major = '$major_esc' AND date >= '$date_from' AND date <= '$date_to'");
 $cost = $total_cost ? (int)$total_cost[0]['total'] : 0;
 
@@ -136,7 +136,7 @@ for ($d = 1; $d <= $days_in_month; $d++) {
 }
 $chart_prev_month_label = date('M Y', $prev_month_ts);
 
-// --- Project-level cost analysis (all time) ---
+// --- Project-level cost analysis (all time) – costs table only ---
 $cost_all_time_row = $db->read("SELECT COALESCE(SUM(amount), 0) AS total FROM costs WHERE major = '$major_esc'");
 $cost_all_time = $cost_all_time_row ? (int)$cost_all_time_row[0]['total'] : 0;
 $cost_by_category = $db->read("SELECT c.cost_category_id, cc.title AS category_title, SUM(c.amount) AS total FROM costs c LEFT JOIN cost_categories cc ON cc.id = c.cost_category_id WHERE c.major = '$major_esc' GROUP BY c.cost_category_id ORDER BY total DESC");
