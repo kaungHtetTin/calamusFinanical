@@ -3,7 +3,7 @@ if (!isset($db)) {
     require_once __DIR__ . '/../config.php';
 }
 require_once __DIR__ . '/../auth.php';
-require_login();
+require_login($db);
 
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 $base = defined('FINANCIAL_BASE') ? FINANCIAL_BASE : '';

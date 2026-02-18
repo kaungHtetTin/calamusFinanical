@@ -23,7 +23,8 @@ if (auth_user()) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
-    if (auth_login($db, $email, $password)) {
+    $remember = !empty($_POST['remember']);
+    if (auth_login($db, $email, $password, $remember)) {
         $goto = isset($_POST['redirect']) ? trim($_POST['redirect']) : ($base . '/index.php');
         // Only allow same-origin path (no protocol or host)
         if ($goto === '' || strpos($goto, '://') !== false || !preg_match('#^[a-z0-9/_\-\.\?=&]+$#i', $goto)) {
@@ -54,6 +55,9 @@ $redirect_value = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect'])
     .login-page .form-group label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
     .login-page .form-group input { width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); }
     .login-page .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2); }
+    .login-page .form-group-checkbox { margin-bottom: 16px; }
+    .login-page .checkbox-label { display: flex; align-items: center; gap: 8px; font-weight: 400; cursor: pointer; }
+    .login-page .checkbox-label input { width: auto; }
     .login-page .btn-block { width: 100%; justify-content: center; margin-top: 8px; }
     .login-page .form-message-error { margin-bottom: 16px; }
   </style>
@@ -75,6 +79,12 @@ $redirect_value = isset($_GET['redirect']) ? htmlspecialchars($_GET['redirect'])
         <div class="form-group">
           <label for="password">Password</label>
           <input type="password" id="password" name="password" required autocomplete="current-password">
+        </div>
+        <div class="form-group form-group-checkbox">
+          <label class="checkbox-label">
+            <input type="checkbox" name="remember" value="1" <?php echo !empty($_POST['remember']) ? 'checked' : ''; ?>>
+            Remember me
+          </label>
         </div>
         <button type="submit" class="btn btn-primary btn-block">Sign in</button>
       </form>
