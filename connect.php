@@ -10,7 +10,7 @@ class Database {
 	private $host = "localhost";
     private $username = "root";
     private $password = "";
-    private $db = "calamus_db";
+    private $db = "calamus_test";
 
 	//this is git ignore file
 	// I want to ignore this file

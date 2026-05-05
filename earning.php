@@ -33,8 +33,8 @@ $net = $earning - $cost;
 $message = '';
 $error = '';
 
-// Payments list: join learners on learner_phone = payments.user_id; always select p.user_id so phone shows when join misses
-$payments_list = $db->read("SELECT p.id, p.user_id, p.amount, p.date, p.approve, l.learner_name, l.learner_phone FROM payments p LEFT JOIN learners l ON l.learner_phone = p.user_id WHERE p.major = '$major_esc' AND p.date >= '$date_from' AND p.date <= '$date_to' ORDER BY p.date DESC, p.id DESC");
+// Payments list: join learners on user_id = payments.user_id
+$payments_list = $db->read("SELECT p.id, p.user_id, p.amount, p.date, p.approve, l.learner_name FROM payments p LEFT JOIN learners l ON l.user_id = p.user_id WHERE p.major = '$major_esc' AND p.date >= '$date_from' AND p.date <= '$date_to' ORDER BY p.date DESC, p.id DESC");
 if ($payments_list === false) $payments_list = [];
 
 // Costs list: join cost_categories
@@ -348,7 +348,7 @@ if ($cost_by_category === false) $cost_by_category = [];
     <thead>
       <tr>
         <th>Name</th>
-        <th>Phone</th>
+        <th>User ID</th>
         <th class="num">Amount</th>
         <th>Date</th>
       </tr>
@@ -357,7 +357,7 @@ if ($cost_by_category === false) $cost_by_category = [];
       <?php foreach ($payments_list as $row): ?>
       <tr>
         <td><?php echo htmlspecialchars($row['learner_name'] ?? '—'); ?></td>
-        <td><?php echo htmlspecialchars($row['learner_phone'] ?? $row['user_id'] ?? '—'); ?></td>
+        <td><?php echo htmlspecialchars($row['user_id'] ?? '—'); ?></td>
         <td class="num"><?php echo number_format($row['amount']); ?></td>
         <td><?php echo htmlspecialchars($row['date']); ?></td>
       </tr>

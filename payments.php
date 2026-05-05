@@ -67,11 +67,11 @@ if ($project_esc !== null) {
 $projects_list = $db->read("SELECT id, project_name, keyword FROM course_categories ORDER BY project_name");
 if ($projects_list === false) $projects_list = [];
 
-// Name from learners: join on phone number (payments.user_id = learners.learner_phone)
+// Name from learners: join on user_id (payments.user_id = learners.user_id)
 $list = $db->read(
-    "SELECT p.*, l.learner_name, l.learner_phone, cc.project_name " .
+    "SELECT p.*, l.learner_name, cc.project_name " .
     "FROM payments p " .
-    "LEFT JOIN learners l ON l.learner_phone = p.user_id " .
+    "LEFT JOIN learners l ON l.user_id = p.user_id " .
     "LEFT JOIN course_categories cc ON cc.keyword = p.major " .
     "WHERE $where ORDER BY p.date DESC, p.id DESC"
 );
@@ -158,7 +158,7 @@ function payments_filter_hidden($status_filter, $date_from, $date_to, $project_f
             <th class="col-screenshot">Screenshot</th>
             <th>Project</th>
             <th>Name</th>
-            <th>Phone</th>
+            <th>User ID</th>
             <th class="num">Amount</th>
             <th>Date</th>
             <th>Status</th>
@@ -182,7 +182,7 @@ function payments_filter_hidden($status_filter, $date_from, $date_to, $project_f
             </td>
             <td><?php echo htmlspecialchars($row['project_name'] ?? $row['major'] ?? '—'); ?></td>
             <td><?php echo htmlspecialchars($row['learner_name'] ?? '—'); ?></td>
-            <td><?php echo htmlspecialchars($row['learner_phone'] ?? $row['user_id'] ?? '—'); ?></td>
+            <td><?php echo htmlspecialchars($row['user_id'] ?? '—'); ?></td>
             <td class="num"><?php echo number_format($row['amount']); ?></td>
             <td><?php echo htmlspecialchars($row['date']); ?></td>
             <td>
@@ -243,7 +243,7 @@ function payments_filter_hidden($status_filter, $date_from, $date_to, $project_f
             <span class="payment-card-status <?php echo $row['approve'] ? 'badge-success' : 'badge-pending'; ?>"><?php echo $row['approve'] ? 'Approved' : 'Pending'; ?></span>
           </div>
           <p class="payment-card-name"><?php echo htmlspecialchars($row['learner_name'] ?? '—'); ?></p>
-          <p class="payment-card-phone"><?php echo htmlspecialchars($row['learner_phone'] ?? $row['user_id'] ?? '—'); ?></p>
+          <p class="payment-card-phone"><?php echo htmlspecialchars($row['user_id'] ?? '—'); ?></p>
           <p class="payment-card-amount"><?php echo number_format($row['amount']); ?> MMK</p>
           <p class="payment-card-date"><?php echo htmlspecialchars($row['date']); ?></p>
           <div class="payment-card-actions">
