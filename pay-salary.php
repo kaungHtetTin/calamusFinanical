@@ -60,8 +60,7 @@ foreach ($staffs_list as $s) {
 }
 
 // Projects for cost distribution (must load before POST handling for validation)
-$course_categories = $db->read("SELECT keyword, project_name FROM course_categories ORDER BY project_name");
-if ($course_categories === false) $course_categories = [];
+$course_categories = financial_project_rows($db);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $paid_by = (int)($_POST['paid_by'] ?? 0);
@@ -265,7 +264,10 @@ foreach ($staffs_list as $s) {
         $val = isset($_POST['cost_project'][$key]) ? (int)$_POST['cost_project'][$key] : 0;
       ?>
       <div class="form-group">
-        <label>Amount for <?php echo htmlspecialchars($cc['project_name'] ?? $cc['keyword']); ?> (MMK)</label>
+        <label class="project-label">
+          <?php echo financial_project_icon_html($cc, 'project-seal', 'chart', 16); ?>
+          <span>Amount for <?php echo htmlspecialchars($cc['project_name'] ?? $cc['keyword']); ?> (MMK)</span>
+        </label>
         <input type="number" name="cost_project[<?php echo htmlspecialchars($key); ?>]" class="cost-project-input" value="<?php echo $val; ?>" min="0" step="1" data-project="<?php echo htmlspecialchars($key); ?>">
       </div>
       <?php endforeach; ?>

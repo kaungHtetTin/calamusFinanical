@@ -15,6 +15,12 @@ if ($major === '') {
     exit;
 }
 $major_esc = $conn->real_escape_string($major);
+$projects_list = financial_project_rows($db);
+$current_project = financial_project_by_key($projects_list, $major);
+$project_label = financial_project_label($projects_list, $major);
+if ($project_label !== '-' && $project_label !== $major) {
+    $path = $project_label;
+}
 
 $month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
 $year = isset($_GET['year']) ? (int)$_GET['year'] : (int)date('Y');
@@ -144,7 +150,13 @@ if ($cost_by_category === false) $cost_by_category = [];
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
-<h1 class="page-title">Earning (<?php echo htmlspecialchars($path); ?>)</h1>
+<div class="earning-page">
+  <div class="admin-page-heading">
+    <div>
+      <p class="eyebrow">Project Earning</p>
+      <h1>Earning (<?php echo htmlspecialchars($path); ?>)</h1>
+    </div>
+  </div>
 
 <?php if ($message): ?>
 <p style="color: var(--success); margin-bottom: 16px;"><?php echo htmlspecialchars($message); ?></p>
@@ -153,8 +165,7 @@ if ($cost_by_category === false) $cost_by_category = [];
 <p style="color: var(--error); margin-bottom: 16px;"><?php echo htmlspecialchars($error); ?></p>
 <?php endif; ?>
 
-<div class="earning-page">
-<form method="get" action="" class="filters-bar">
+<form method="get" action="" class="filter-toolbar compact-period-form earning-filter">
   <input type="hidden" name="major" value="<?php echo htmlspecialchars($major); ?>">
   <input type="hidden" name="path" value="<?php echo htmlspecialchars($path); ?>">
   <div class="filter-group">
@@ -173,74 +184,84 @@ if ($cost_by_category === false) $cost_by_category = [];
       <?php endfor; ?>
     </select>
   </div>
-  <button type="submit" class="btn btn-secondary btn-sm">Apply</button>
+  <button type="submit" class="btn secondary">Apply</button>
 </form>
 
 <!-- Sale: Today → Month → Year → All time (narrowest to broadest) -->
-<div class="dashboard-cards">
-  <div class="card">
-    <div class="card-title">Sale for today (MMK)</div>
-    <p class="card-value positive"><?php echo number_format($sale_of_today); ?></p>
-    <span class="card-sub"><?php echo date('d M Y', strtotime($today_date)); ?></span>
-  </div>
-  <div class="card">
-    <div class="card-title">Sale of month (MMK)</div>
-    <p class="card-value positive"><?php echo number_format($sale_of_month); ?></p>
-    <span class="card-sub"><?php echo date('F Y', strtotime($date_from)); ?></span>
-  </div>
-  <div class="card">
-    <div class="card-title">Sale of year (MMK)</div>
-    <p class="card-value positive"><?php echo number_format($sale_of_year); ?></p>
-    <span class="card-sub"><?php echo (int)$year; ?></span>
-  </div>
-  <div class="card">
-    <div class="card-title">Sale for all time (MMK)</div>
-    <p class="card-value positive"><?php echo number_format($sale_of_all_time); ?></p>
-    <span class="card-sub">All time</span>
-  </div>
+<div class="metrics-grid">
+  <article class="metric-card glass">
+    <span><?php echo financial_project_icon_html($current_project, 'project-seal', 'card', 16); ?></span>
+    <small>Sale for today (MMK)</small>
+    <strong class="positive"><?php echo number_format($sale_of_today); ?></strong>
+    <p><?php echo date('d M Y', strtotime($today_date)); ?></p>
+  </article>
+  <article class="metric-card glass">
+    <span><?php echo financial_project_icon_html($current_project, 'project-seal', 'chart', 16); ?></span>
+    <small>Sale of month (MMK)</small>
+    <strong class="positive"><?php echo number_format($sale_of_month); ?></strong>
+    <p><?php echo date('F Y', strtotime($date_from)); ?></p>
+  </article>
+  <article class="metric-card glass">
+    <span><?php echo financial_project_icon_html($current_project, 'project-seal', 'chart', 16); ?></span>
+    <small>Sale of year (MMK)</small>
+    <strong class="positive"><?php echo number_format($sale_of_year); ?></strong>
+    <p><?php echo (int)$year; ?></p>
+  </article>
+  <article class="metric-card glass">
+    <span><?php echo financial_project_icon_html($current_project, 'project-seal', 'wallet', 16); ?></span>
+    <small>Sale for all time (MMK)</small>
+    <strong class="positive"><?php echo number_format($sale_of_all_time); ?></strong>
+    <p>All time</p>
+  </article>
 </div>
 
 <!-- Sale of year – bar chart (by month) -->
-<div class="content-card">
-  <div class="card-header">
+<section class="panel glass">
+  <div class="panel-heading">
     <h2>Sale of year</h2>
     <span class="card-sub"><?php echo (int)$year; ?> — by month (MMK)</span>
   </div>
   <div class="chart-container" style="position: relative; height: 280px;">
     <canvas id="chartSaleOfYear"></canvas>
   </div>
-</div>
+</section>
 
 <!-- Sale of month – line chart (by day) -->
-<div class="content-card">
-  <div class="card-header">
+<section class="panel glass">
+  <div class="panel-heading">
     <h2>Sale of month</h2>
     <span class="card-sub"><?php echo date('F Y', strtotime($date_from)); ?> — by day (MMK)</span>
   </div>
   <div class="chart-container" style="position: relative; height: 280px;">
     <canvas id="chartSaleOfMonth"></canvas>
   </div>
-</div>
+</section>
 
 <!-- Total Earning, Total Cost, Net (selected month) -->
-<div class="dashboard-cards">
-  <div class="card">
-    <div class="card-title">Total Earning (MMK)</div>
-    <p class="card-value positive"><?php echo number_format($earning); ?></p>
-  </div>
-  <div class="card">
-    <div class="card-title">Total Cost (MMK)</div>
-    <p class="card-value negative"><?php echo number_format($cost); ?></p>
-  </div>
-  <div class="card">
-    <div class="card-title">Net Earning (MMK)</div>
-    <p class="card-value"><?php echo number_format($net); ?></p>
-  </div>
+<div class="metrics-grid">
+  <article class="metric-card glass">
+    <span><?php echo financial_project_icon_html($current_project, 'project-seal', 'wallet', 16); ?></span>
+    <small>Total Earning (MMK)</small>
+    <strong class="positive"><?php echo number_format($earning); ?></strong>
+    <p><?php echo date('F Y', strtotime($date_from)); ?></p>
+  </article>
+  <article class="metric-card glass">
+    <span><?php echo console_icon('cost', 16); ?></span>
+    <small>Total Cost (MMK)</small>
+    <strong class="negative"><?php echo number_format($cost); ?></strong>
+    <p><?php echo date('F Y', strtotime($date_from)); ?></p>
+  </article>
+  <article class="metric-card glass">
+    <span><?php echo financial_project_icon_html($current_project, 'project-seal', 'chart', 16); ?></span>
+    <small>Net Earning (MMK)</small>
+    <strong><?php echo number_format($net); ?></strong>
+    <p><?php echo $net_margin_pct; ?>% margin</p>
+  </article>
 </div>
 
 <!-- Project statistics (current project, this period) -->
-<div class="content-card">
-  <div class="card-header">
+<section class="panel glass">
+  <div class="panel-heading">
     <h2>Project statistics</h2>
     <span class="card-sub"><?php echo htmlspecialchars($path); ?> — <?php echo date('F Y', strtotime($date_from)); ?></span>
   </div>
@@ -282,11 +303,11 @@ if ($cost_by_category === false) $cost_by_category = [];
       <span class="stat-value"><?php echo $net_margin_pct; ?>%</span>
     </div>
   </div>
-</div>
+</section>
 
 <!-- Cost analysis (all time) – project level -->
-<div class="content-card">
-  <div class="card-header">
+<section class="panel glass">
+  <div class="panel-heading">
     <h2>Cost analysis (all time)</h2>
     <span class="card-sub"><?php echo htmlspecialchars($path); ?> — <strong class="card-value negative"><?php echo number_format($cost_all_time); ?> MMK</strong></span>
   </div>
@@ -296,12 +317,12 @@ if ($cost_by_category === false) $cost_by_category = [];
     <?php else: ?>
     <div class="cost-by-category-wrap" style="padding: 0 24px 24px;">
       <h3 class="chart-title" style="margin: 0 0 16px; font-size: 16px;">By category</h3>
-      <div class="cost-analysis-layout" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+      <div class="cost-analysis-layout">
         <div class="chart-container" style="position: relative; height: 260px; max-width: 320px;">
           <canvas id="chartCostByCategory"></canvas>
         </div>
-        <div class="table-wrap">
-          <table class="data-table">
+        <div class="table-wrap cost-analysis-table-wrap">
+          <table class="data-table cost-analysis-table">
             <thead>
               <tr>
                 <th>Category</th>
@@ -334,16 +355,17 @@ if ($cost_by_category === false) $cost_by_category = [];
     </div>
     <?php endif; ?>
   </div>
-</div>
+</section>
 
 <!-- Payments -->
-<div class="content-card">
-  <div class="card-header">
+<section class="panel glass">
+  <div class="panel-heading">
     <h2>Payments</h2>
   </div>
   <?php if (empty($payments_list)): ?>
   <div class="empty-state">No payments in this period.</div>
   <?php else: ?>
+  <div class="table-wrap">
   <table class="data-table">
     <thead>
       <tr>
@@ -371,17 +393,19 @@ if ($cost_by_category === false) $cost_by_category = [];
       </tr>
     </tfoot>
   </table>
+  </div>
   <?php endif; ?>
-</div>
+</section>
 
 <!-- Costs -->
-<div class="content-card">
-  <div class="card-header">
+<section class="panel glass">
+  <div class="panel-heading">
     <h2>Costs</h2>
   </div>
   <?php if (empty($costs_list)): ?>
   <div class="empty-state">No costs in this period.</div>
   <?php else: ?>
+  <div class="table-wrap">
   <table class="data-table">
     <thead>
       <tr>
@@ -409,8 +433,9 @@ if ($cost_by_category === false) $cost_by_category = [];
       </tr>
     </tfoot>
   </table>
+  </div>
   <?php endif; ?>
-</div>
+</section>
 </div><!-- /.earning-page -->
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>

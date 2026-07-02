@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($type === 1 && $cost_category_id <= 0) {
         $error = 'Cost category is required for Out transactions.';
     } else {
-        $projects_for_cost = $db->read("SELECT id, keyword, project_name FROM course_categories ORDER BY id");
-        $projects_for_cost = $projects_for_cost ?: [];
+        $projects_for_cost = financial_project_rows($db);
+        $project_keys = array_column($projects_for_cost, 'keyword');
 
         if ($type === 1 && $cost_mode === 'split') {
             $total_cost = 0;
@@ -42,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($total_cost !== $amount) {
                 $error = 'Sum of amounts per project (' . number_format($total_cost) . ') must equal transaction amount (' . number_format($amount) . ').';
             }
+        } elseif ($type === 1 && $cost_project_single !== 'general' && !in_array($cost_project_single, $project_keys, true)) {
+            $error = 'Select a valid project.';
         }
 
         if ($error === '') {
@@ -97,15 +99,20 @@ foreach ([1, 2, 3] as $sid) {
     $staffs_list[] = ['id' => $sid, 'name' => $staffs_by_id[$sid] ?? $fallback_names[$sid]];
 }
 
-$projects_list = $db->read("SELECT id, keyword, project_name FROM course_categories ORDER BY id");
-if ($projects_list === false) $projects_list = [];
+$projects_list = financial_project_rows($db);
 $cost_categories = $db->read("SELECT id, title FROM cost_categories ORDER BY title");
 if ($cost_categories === false) $cost_categories = [];
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
-<h1 class="page-title">Add Transaction</h1>
-<p class="period-hint">Record an In or Out transaction. Out transactions can be recorded as a cost (optional project or split by projects); In transactions do not create a cost record.</p>
+<div class="form-page">
+<div class="admin-page-heading">
+  <div>
+    <p class="eyebrow">Remaining Balance</p>
+    <h1>Add Transaction</h1>
+  </div>
+  <a href="<?php echo $base; ?>/funds.php" class="btn secondary">Back to Remaining Balance</a>
+</div>
 
 <?php if ($error): ?>
 <div class="form-message form-message-error" role="alert"><?php echo htmlspecialchars($error); ?></div>
@@ -113,12 +120,14 @@ if ($cost_categories === false) $cost_categories = [];
 
 <div class="add-transaction-wrap">
   <form method="post" action="" class="add-transaction-form" id="addTransactionForm">
-    <div class="content-card add-transaction-section">
-      <div class="card-header">
-        <h2 class="section-title">Transaction</h2>
-        <a href="<?php echo $base; ?>/funds.php" class="btn btn-secondary btn-sm">← Back</a>
+    <section class="panel glass add-transaction-section form-panel">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">Transaction</p>
+          <h2 class="section-title">Fund movement</h2>
+        </div>
       </div>
-      <div class="content-card-body">
+      <div class="panel-body">
         <div class="form-row form-row-2">
           <div class="form-group">
             <label for="amount">Amount (MMK)</label>
@@ -146,14 +155,14 @@ if ($cost_categories === false) $cost_categories = [];
           </select>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="content-card add-transaction-section add-transaction-cost" id="costSection" style="display: none;">
-      <div class="card-header">
+    <section class="panel glass add-transaction-section add-transaction-cost form-panel" id="costSection" style="display: none;">
+      <div class="panel-heading">
         <h2 class="section-title">Cost record</h2>
         <span class="card-sub">Out transactions only — record as a cost</span>
       </div>
-      <div class="content-card-body">
+      <div class="panel-body">
         <div class="form-group">
           <label for="cost_category_id">Cost category <span class="required">*</span></label>
           <select id="cost_category_id" name="cost_category_id">
@@ -194,7 +203,10 @@ if ($cost_categories === false) $cost_categories = [];
             <p class="form-hint block">Enter amount per project. Sum must equal the transaction amount above.</p>
             <?php foreach ($projects_list as $proj): ?>
             <div class="form-group form-group-inline">
-              <label for="cost_<?php echo htmlspecialchars($proj['keyword']); ?>"><?php echo htmlspecialchars($proj['project_name'] ?? $proj['keyword']); ?></label>
+              <label for="cost_<?php echo htmlspecialchars($proj['keyword']); ?>" class="project-label">
+                <?php echo financial_project_icon_html($proj, 'project-seal', 'chart', 16); ?>
+                <span><?php echo htmlspecialchars($proj['project_name'] ?? $proj['keyword']); ?></span>
+              </label>
               <input type="number" id="cost_<?php echo htmlspecialchars($proj['keyword']); ?>" name="cost_project[<?php echo htmlspecialchars($proj['keyword']); ?>]" value="<?php echo isset($_POST['cost_project'][$proj['keyword']]) ? (int)$_POST['cost_project'][$proj['keyword']] : 0; ?>" min="0" step="1" class="cost-split-input">
             </div>
             <?php endforeach; ?>
@@ -202,13 +214,14 @@ if ($cost_categories === false) $cost_categories = [];
           </div>
         </fieldset>
       </div>
-    </div>
+    </section>
 
     <div class="form-actions add-transaction-actions">
-      <button type="submit" class="btn btn-primary">Add transaction & cost</button>
-      <a href="<?php echo $base; ?>/funds.php" class="btn btn-secondary">Cancel</a>
+      <button type="submit" class="btn primary">Add transaction</button>
+      <a href="<?php echo $base; ?>/funds.php" class="btn secondary">Cancel</a>
     </div>
   </form>
+</div>
 </div>
 
 <script>

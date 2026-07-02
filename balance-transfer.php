@@ -1,6 +1,6 @@
 <?php
 /**
- * Balance transfer – standalone page from Remaining Balance.
+ * Balance transfer - standalone page from Remaining Balance.
  * Transfer between staff_id 1, 2, 3 only.
  */
 $page_title = 'Balance Transfer';
@@ -11,7 +11,6 @@ $base = FINANCIAL_BASE;
 $message = '';
 $error = '';
 
-// Handle POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $from_id = (int)($_POST['from_staff_id'] ?? 0);
     $to_id = (int)($_POST['to_staff_id'] ?? 0);
@@ -51,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Staff list: only 1, 2, 3
 $staffs_from_db = $db->read("SELECT id, name FROM staffs WHERE id IN (1, 2, 3) ORDER BY id");
 $staffs_by_id = [];
 if ($staffs_from_db) {
@@ -67,46 +65,55 @@ foreach ([1, 2, 3] as $sid) {
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
-<h1 class="page-title">Balance Transfer</h1>
-<p class="period-hint">Transfer amount from one remaining balance staff (1, 2, 3) to another.</p>
-
-<?php if ($error): ?>
-<p style="color: var(--error); margin-bottom: 16px;"><?php echo htmlspecialchars($error); ?></p>
-<?php endif; ?>
-
-<div class="content-card">
-  <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
-    <h2>Transfer between staff</h2>
-    <a href="<?php echo $base; ?>/funds.php" class="btn btn-secondary btn-sm">← Back to Remaining Balance</a>
+<div class="form-page">
+  <div class="admin-page-heading">
+    <div>
+      <p class="eyebrow">Remaining Balance</p>
+      <h1>Balance Transfer</h1>
+    </div>
+    <a href="<?php echo $base; ?>/funds.php" class="btn secondary">Back to Remaining Balance</a>
   </div>
-  <form method="post" action="">
-    <div class="form-group">
-      <label>From</label>
-      <select name="from_staff_id" required>
-        <option value="">Select</option>
-        <?php foreach ($staffs_list as $s): ?>
-        <option value="<?php echo (int)$s['id']; ?>"><?php echo htmlspecialchars($s['name']); ?></option>
-        <?php endforeach; ?>
-      </select>
+
+  <?php if ($error): ?>
+  <div class="form-message form-message-error" role="alert"><?php echo htmlspecialchars($error); ?></div>
+  <?php endif; ?>
+
+  <section class="panel glass form-panel narrow">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">Transfer</p>
+        <h2>Move balance between staff</h2>
+      </div>
     </div>
-    <div class="form-group">
-      <label>To</label>
-      <select name="to_staff_id" required>
-        <option value="">Select</option>
-        <?php foreach ($staffs_list as $s): ?>
-        <option value="<?php echo (int)$s['id']; ?>"><?php echo htmlspecialchars($s['name']); ?></option>
-        <?php endforeach; ?>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Amount</label>
-      <input type="number" name="amount" required min="1">
-    </div>
-    <div class="form-actions">
-      <button type="submit" class="btn btn-primary">Transfer</button>
-      <a href="<?php echo $base; ?>/funds.php" class="btn btn-secondary">Cancel</a>
-    </div>
-  </form>
+    <form method="post" action="" class="crud-grid">
+      <label class="form-field">
+        <span>From</span>
+        <select name="from_staff_id" required>
+          <option value="">Select staff</option>
+          <?php foreach ($staffs_list as $s): ?>
+          <option value="<?php echo (int)$s['id']; ?>"><?php echo htmlspecialchars($s['name']); ?></option>
+          <?php endforeach; ?>
+        </select>
+      </label>
+      <label class="form-field">
+        <span>To</span>
+        <select name="to_staff_id" required>
+          <option value="">Select staff</option>
+          <?php foreach ($staffs_list as $s): ?>
+          <option value="<?php echo (int)$s['id']; ?>"><?php echo htmlspecialchars($s['name']); ?></option>
+          <?php endforeach; ?>
+        </select>
+      </label>
+      <label class="form-field span-2">
+        <span>Amount</span>
+        <input type="number" name="amount" required min="1">
+      </label>
+      <div class="form-actions span-2">
+        <button type="submit" class="btn primary">Transfer</button>
+        <a href="<?php echo $base; ?>/funds.php" class="btn secondary">Cancel</a>
+      </div>
+    </form>
+  </section>
 </div>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

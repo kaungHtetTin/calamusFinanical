@@ -11,6 +11,8 @@ $error = '';
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $is_edit = $id > 0;
 $row = null;
+$projects_list = financial_project_rows($db);
+$project_keys = array_column($projects_list, 'keyword');
 
 if ($is_edit) {
     $rows = $db->read("SELECT * FROM staffs WHERE id = $id");
@@ -34,9 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $name_esc = $conn->real_escape_string($name);
         $rank_esc = $conn->real_escape_string($rank);
-        $project_esc = $conn->real_escape_string(mb_substr($project, 0, 11));
+        if ($project !== '' && $project !== 'all' && !in_array($project, $project_keys, true)) {
+            $error = 'Select a valid project.';
+        }
+        $project_esc = $conn->real_escape_string($project);
 
-        if ($post_id > 0) {
+        if ($error !== '') {
+            // Keep submitted values below.
+        } elseif ($post_id > 0) {
             $sql = "UPDATE staffs SET name = '$name_esc', rank = '$rank_esc', ranking = $ranking, project = '$project_esc', present = $present WHERE id = $post_id";
             if ($db->save($sql)) {
                 header('Location: ' . $base . '/staffs.php?msg=' . urlencode('Staff updated.'));
@@ -72,13 +79,19 @@ if (!$row && $is_edit) {
 ?>
 <?php include __DIR__ . '/includes/header.php'; ?>
 
-<h1 class="page-title"><?php echo $is_edit ? 'Edit staff' : 'Add staff'; ?></h1>
+<div class="form-page">
+  <div class="admin-page-heading">
+    <div>
+      <p class="eyebrow">Team</p>
+      <h1><?php echo $is_edit ? 'Edit staff' : 'Add staff'; ?></h1>
+    </div>
+  </div>
 
 <?php if ($error): ?>
 <p class="form-message form-message-error"><?php echo htmlspecialchars($error); ?></p>
 <?php endif; ?>
 
-<div class="content-card">
+<div class="content-card form-panel">
   <div class="card-header">
     <h2><?php echo $is_edit ? 'Edit staff' : 'New staff'; ?></h2>
     <a href="<?php echo $base; ?>/staffs.php" class="btn btn-secondary btn-sm">← Back to Staff</a>
@@ -102,8 +115,14 @@ if (!$row && $is_edit) {
           <input type="number" id="ranking" name="ranking" value="<?php echo (int)($row['ranking'] ?? 0); ?>" min="0" step="1">
         </div>
         <div class="form-group">
-          <label for="project">Project (code, max 11)</label>
-          <input type="text" id="project" name="project" maxlength="11" value="<?php echo htmlspecialchars($row['project'] ?? ''); ?>" placeholder="Optional">
+          <label for="project">Project scope</label>
+          <select id="project" name="project">
+            <option value="">No project</option>
+            <option value="all" <?php echo ($row['project'] ?? '') === 'all' ? 'selected' : ''; ?>>All active projects</option>
+            <?php foreach ($projects_list as $project): ?>
+            <option value="<?php echo htmlspecialchars($project['keyword']); ?>" <?php echo ($row['project'] ?? '') === $project['keyword'] ? 'selected' : ''; ?>><?php echo htmlspecialchars($project['project_name']); ?></option>
+            <?php endforeach; ?>
+          </select>
         </div>
       </div>
       <div class="form-group">
@@ -118,6 +137,7 @@ if (!$row && $is_edit) {
       </div>
     </div>
   </form>
+</div>
 </div>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>
