@@ -801,6 +801,7 @@ a.header-notification-item:hover {
 
 .metric-card {
   overflow: hidden;
+  padding-right: 54px;
 }
 
 .metric-card > span {
@@ -842,6 +843,11 @@ a.header-notification-item:hover {
   font-weight: 800;
   line-height: 1.12;
   overflow-wrap: anywhere;
+}
+
+.metric-card strong,
+.metric-card p {
+  max-width: 100%;
 }
 
 .metric-card strong.positive,

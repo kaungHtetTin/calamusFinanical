@@ -176,7 +176,7 @@ $total_balance = array_sum($balances);
                   <input type="hidden" name="action" value="delete">
                   <input type="hidden" name="id" value="<?php echo $row_id; ?>">
                   <button type="submit" class="icon-btn small danger" aria-label="Delete transaction" title="Delete">
-                    <?php echo console_icon('cost', 14); ?>
+                    <?php echo console_icon('trash', 14); ?>
                   </button>
                 </form>
                 <?php else: ?>

@@ -22,7 +22,7 @@ if (empty($payers_list)) {
     $payers_list = [['id' => 1, 'name' => 'Staff 1'], ['id' => 2, 'name' => 'Staff 2']];
 }
 
-// Employees: staff 1, 2 (owners – no cost record) + in-service staff excluding 1, 2, 3. staff_id 3 is not allowed.
+// Employees: staff 1, 2 (owners – allow project distribution) + in-service staff excluding 1, 2, 3. staff_id 3 is not allowed.
 $staffs_list = [];
 $owners_recipients = $db->read("SELECT id, name, project FROM staffs WHERE id IN (1, 2) ORDER BY id");
 if ($owners_recipients) {
@@ -30,9 +30,9 @@ if ($owners_recipients) {
         $staffs_list[] = [
             'id' => (int)$s['id'],
             'name' => $s['name'] ?? 'Staff ' . $s['id'],
-            'project' => trim($s['project'] ?? ''),
-            'is_all' => false,
-            'skip_cost' => true,
+            'project' => 'all',
+            'is_all' => true,
+            'skip_cost' => false,
         ];
     }
 }
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!$employee_skip_cost && $cost_category_id <= 0) {
         $error = 'Cost category is required so the salary is recorded in cost data.';
     } else {
-        // Per-project cost distribution (only when not skip_cost)
+        // Per-project cost distribution.
         $cost_per_project = [];
         $total_cost = 0;
         if ($employee_skip_cost) {
@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $salary_project_esc = $conn->real_escape_string($salary_project_value);
             // 2. Salary: one record (total amount)
             $db->save("INSERT INTO salaries (staff_id, amount, project, date, transfer_id) VALUES ($staff_id, $amount, '$salary_project_esc', '$date_esc', $fund_id)");
-            // 3. Cost: one record per project (only when not skip_cost for staff 1, 2)
+            // 3. Cost: one record per project
             if (!$employee_skip_cost) {
                 foreach ($cost_per_project as $major => $cost_amt) {
                     $major_esc = $conn->real_escape_string($major);

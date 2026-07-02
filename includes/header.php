@@ -63,6 +63,7 @@ $nav_sections = [
     'Team' => [
         ['staffs', 'user', 'Staff', $base . '/staffs.php'],
         ['salaries', 'users', 'Salaries', $base . '/salaries.php'],
+        ['pay-salary', 'card', 'Pay Salary', $base . '/pay-salary.php'],
     ],
     'Settings' => [
         ['cost_categories', 'folder', 'Cost Categories', $base . '/cost_categories.php'],
